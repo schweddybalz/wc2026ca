@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WC2026 Pool — Group Stage Picks</title>
+<title>World Cup 2026 Pool — USA Edition</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -113,7 +113,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 <body>
 
 <header class="header">
-  <div class="logo">WC2026 Pool <span>Group Stage Picks</span></div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <img src="https://flagcdn.com/w40/ca.png" height="20" style="border-radius:2px;display:block" alt="">
+    <div class="logo">World Cup 2026 Pool <span>Canada Edition</span></div>
+    <img src="https://flagcdn.com/w40/ca.png" height="20" style="border-radius:2px;display:block" alt="">
+  </div>
 </header>
 
 <div class="toast" id="toast"></div>
@@ -130,7 +134,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   <div class="step active" id="step-rules">
     <div class="identity-card" style="max-width:560px">
       <h2>World Cup 2026 Pool</h2>
-      <p style="margin-bottom:1.25rem">Read the scoring rules before submitting your picks.</p>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:1.25rem">
+        <img src="https://flagcdn.com/w40/ca.png" height="16" style="border-radius:2px;display:block" alt="">
+        <span style="color:var(--gold);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase">Canada Edition</span>
+        <img src="https://flagcdn.com/w40/ca.png" height="16" style="border-radius:2px;display:block" alt="">
+      </div>
 
       <div style="background:var(--surface2);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:1rem">
         <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">Group Stage — 64 pts available</div>
@@ -178,6 +186,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           <div style="flex:1;background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center">
             <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#8B6914;line-height:1">20%</div>
             <div style="font-size:11px;color:var(--text-muted);margin-top:3px">3rd Place</div>
+          </div>
+          <div style="flex:1;background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:#e74c3c;line-height:1">FORBSIE</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:3px">4th Place</div>
           </div>
         </div>
         <div style="font-size:11px;color:var(--text-dim);margin-top:8px">Tied places split the combined payout equally. No tiebreakers.</div>
@@ -264,7 +276,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <strong style="color:var(--text)">What happens next?</strong><br><br>
         Once all picks are in and the tournament kicks off, the commissioner will share the standings link. Picks will be visible to everyone after the deadline.
       </div>
-      <button class="btn btn-secondary" onclick="startOver()">Submit Different Picks</button>
+      <button class="btn btn-secondary" onclick="window.location.reload()">&#8592; Start Over</button>
     </div>
   </div>
 
