@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WC2026 Pool — Group Stage Picks</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C9A84C;--gold-light:#E8C96A;
+  --green:#2D9E56;--red:#C0392B;--blue:#5B9BD5;
+  --bg:#0B0E0B;--surface:#111511;--surface2:#182018;
+  --border:rgba(201,168,76,0.15);--border-bright:rgba(201,168,76,0.4);
+  --text:#F0EDE4;--text-muted:#8A8A7A;--text-dim:#4A4A3A;
+  --radius:6px;--radius-lg:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;height:54px;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--gold);}
+.logo span{color:var(--text-muted);font-size:13px;font-family:'DM Sans',sans-serif;font-weight:300;letter-spacing:0;margin-left:8px;}
+
+.main{max-width:800px;margin:0 auto;padding:2rem 1.2rem 4rem;}
+
+/* PROGRESS BAR */
+.progress-wrap{background:var(--surface2);border-radius:100px;height:6px;margin-bottom:.5rem;overflow:hidden;}
+.progress-bar{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--gold),var(--green));transition:width .3s;}
+.progress-label{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace;margin-bottom:1.5rem;}
+
+/* STEP PANELS */
+.step{display:none;}.step.active{display:block;}
+
+/* IDENTITY STEP */
+.identity-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;max-width:440px;margin:0 auto;}
+.identity-card h2{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px;}
+.identity-card p{font-size:13px;color:var(--text-muted);margin-bottom:1.5rem;line-height:1.6;}
+.form-group{margin-bottom:1rem;}
+.form-label{font-size:11px;color:var(--text-muted);margin-bottom:5px;display:block;font-weight:500;text-transform:uppercase;letter-spacing:.06em;}
+.form-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;transition:border-color .15s;}
+.form-input:focus{outline:none;border-color:var(--gold);}
+.form-input::placeholder{color:var(--text-dim);}
+.form-error{font-size:12px;color:#e74c3c;margin-top:5px;display:none;}
+
+/* SECTION TITLE */
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:var(--gold);margin-bottom:.9rem;display:flex;align-items:center;gap:10px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* INSTRUCTIONS */
+.instructions{background:var(--surface2);border-left:3px solid var(--gold);border-radius:0 var(--radius) var(--radius) 0;padding:9px 13px;font-size:12px;color:var(--text-muted);margin-bottom:1.2rem;line-height:1.6;}
+.instructions strong{color:var(--text);}
+
+/* VALIDATION BAR */
+.val-bar{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px;font-size:12px;margin-bottom:1.2rem;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.val-item{display:flex;align-items:center;gap:5px;}
+.vdot{width:7px;height:7px;border-radius:50%;}
+.vdot.ok{background:var(--green);}
+.vdot.bad{background:var(--red);}
+
+/* GROUPS */
+.groups-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-bottom:1.5rem;}
+.group-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+.group-header{background:var(--surface2);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.group-letter{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--gold);}
+.group-status{font-size:10px;color:var(--text-muted);font-family:'DM Mono',monospace;}
+.group-status.ok{color:var(--green);}
+.team-item{display:flex;align-items:center;gap:9px;padding:9px 12px;cursor:pointer;transition:background .1s;border-left:3px solid transparent;user-select:none;-webkit-user-select:none;}
+.team-item:hover{background:var(--surface2);}
+.team-item.r1{border-left-color:var(--gold);background:rgba(201,168,76,0.08);}
+.team-item.r2{border-left-color:var(--green);background:rgba(45,158,86,0.08);}
+.team-item.r3{border-left-color:var(--blue);background:rgba(91,155,213,0.08);}
+.team-name-txt{font-size:13px;flex:1;}
+.rank-badge{font-size:10px;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:3px;font-weight:500;min-width:30px;text-align:center;}
+.rb1{background:rgba(201,168,76,0.18);color:var(--gold);}
+.rb2{background:rgba(45,158,86,0.18);color:var(--green);}
+.rb3{background:rgba(91,155,213,0.18);color:var(--blue);}
+
+/* BUTTONS */
+.btn{padding:10px 22px;border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:var(--gold);color:#0B0E0B;}
+.btn-primary:hover:not(:disabled){background:var(--gold-light);}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border-bright);}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold);}
+.btn-ghost{background:none;border:1px solid var(--border);color:var(--text-muted);}
+.btn-ghost:hover{border-color:var(--border-bright);color:var(--text);}
+
+/* REVIEW STEP */
+.review-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:8px;margin-bottom:1.5rem;}
+.review-card{background:var(--surface2);border-radius:var(--radius);padding:9px 11px;font-size:12px;}
+.review-group-lbl{font-size:10px;font-family:'DM Mono',monospace;color:var(--text-dim);margin-bottom:6px;}
+.review-pick-row{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
+
+/* CONFIRM / SUCCESS */
+.confirm-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;max-width:480px;margin:0 auto;}
+.confirm-box h2{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;color:var(--gold);margin-bottom:8px;}
+.confirm-box p{font-size:13px;color:var(--text-muted);margin-bottom:1rem;line-height:1.6;}
+.success-icon{font-size:56px;text-align:center;margin-bottom:1rem;}
+
+/* DEADLINE BANNER */
+.deadline-banner{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px;font-size:12px;color:var(--text-muted);margin-bottom:1.5rem;display:flex;align-items:center;gap:8px;}
+.deadline-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0;}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--surface2);border:1px solid var(--border-bright);border-radius:var(--radius);padding:9px 15px;font-size:13px;color:var(--text);z-index:300;transform:translateY(80px);opacity:0;transition:all .25s;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(45,158,86,.5);color:var(--green);}
+.toast.error{border-color:rgba(192,57,43,.5);color:#e74c3c;}
+
+.actions{display:flex;gap:10px;align-items:center;}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">WC2026 Pool <span>Group Stage Picks</span></div>
+</header>
+
+<div class="toast" id="toast"></div>
+
+<main class="main">
+
+  <!-- PROGRESS -->
+  <div style="margin-bottom:1.5rem">
+    <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:20%"></div></div>
+    <div class="progress-label" id="progress-label">Step 1 of 5 — Rules &amp; scoring</div>
+  </div>
+
+  <!-- STEP 1: RULES -->
+  <div class="step active" id="step-rules">
+    <div class="identity-card" style="max-width:560px">
+      <h2>World Cup 2026 Pool</h2>
+      <p style="margin-bottom:1.25rem">Read the scoring rules before submitting your picks.</p>
+
+      <div style="background:var(--surface2);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:1rem">
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">Group Stage — 64 pts available</div>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.9">
+          For each of the 12 groups, pick which team finishes <span style="color:var(--gold);font-weight:500">1st</span>, <span style="color:var(--green);font-weight:500">2nd</span>, and optionally <span style="color:var(--blue);font-weight:500">3rd</span>.<br>
+          You must pick <strong style="color:var(--text)">exactly 8</strong> third-place teams to advance (4 groups will have no 3rd pick).<br><br>
+          <span style="color:var(--text);font-weight:500">+1 pt</span> for each team you correctly picked to advance (1st or 2nd, or 3rd if they advance)<br>
+          <span style="color:var(--text);font-weight:500">+1 pt</span> bonus if you also got their exact finishing position (1st / 2nd / 3rd)<br><br>
+          Maximum <strong style="color:var(--gold)">64 points</strong> in the group stage (32 teams × 2 pts each)
+        </div>
+      </div>
+
+      <div style="background:var(--surface2);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:1rem">
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">Knockout Round — 64 pts per round</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px">
+          <div style="background:var(--surface);border-radius:var(--radius);padding:8px 10px;display:flex;justify-content:space-between;align-items:center">
+            <span style="color:var(--text-muted)">Round of 32</span><span style="color:var(--gold);font-family:'DM Mono',monospace;font-weight:500">4 pts</span>
+          </div>
+          <div style="background:var(--surface);border-radius:var(--radius);padding:8px 10px;display:flex;justify-content:space-between;align-items:center">
+            <span style="color:var(--text-muted)">Round of 16</span><span style="color:var(--gold);font-family:'DM Mono',monospace;font-weight:500">8 pts</span>
+          </div>
+          <div style="background:var(--surface);border-radius:var(--radius);padding:8px 10px;display:flex;justify-content:space-between;align-items:center">
+            <span style="color:var(--text-muted)">Quarterfinals</span><span style="color:var(--gold);font-family:'DM Mono',monospace;font-weight:500">16 pts</span>
+          </div>
+          <div style="background:var(--surface);border-radius:var(--radius);padding:8px 10px;display:flex;justify-content:space-between;align-items:center">
+            <span style="color:var(--text-muted)">Semifinals</span><span style="color:var(--gold);font-family:'DM Mono',monospace;font-weight:500">32 pts</span>
+          </div>
+          <div style="background:var(--surface);border-radius:var(--radius);padding:8px 10px;display:flex;justify-content:space-between;align-items:center;grid-column:1/-1">
+            <span style="color:var(--text-muted)">Final</span><span style="color:var(--gold);font-family:'DM Mono',monospace;font-weight:500">64 pts</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--surface2);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:1.5rem">
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">Prize Payout</div>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1;background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);line-height:1">50%</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:3px">1st Place</div>
+          </div>
+          <div style="flex:1;background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#A8A8A8;line-height:1">30%</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:3px">2nd Place</div>
+          </div>
+          <div style="flex:1;background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#8B6914;line-height:1">20%</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:3px">3rd Place</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:8px">Tied places split the combined payout equally. No tiebreakers.</div>
+      </div>
+
+      <button class="btn btn-primary" onclick="goStep('identity')" style="width:100%">I understand — Enter My Details &rarr;</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: IDENTITY -->
+  <div class="step" id="step-identity">
+    <div class="identity-card">
+      <h2>Your Details</h2>
+      <p>Enter your full name and email. These are used to identify your picks — contact the commissioner if you need to make changes after submitting.</p>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" id="inp-name" placeholder="e.g. Steve Irwin" autocomplete="name">
+        <div class="form-error" id="err-name">Please enter your full name (first and last).</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" id="inp-email" type="email" placeholder="e.g. steve@example.com" autocomplete="email">
+        <div class="form-error" id="err-email">Please enter a valid email address.</div>
+      </div>
+      <div style="margin-top:1.5rem;display:flex;gap:10px">
+        <button class="btn btn-ghost" onclick="goStep('rules')" style="flex:0 0 auto">&#8592; Back</button>
+        <button class="btn btn-primary" onclick="submitIdentity()" style="flex:1">Continue to Picks &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: PICKS -->
+  <div class="step" id="step-picks">
+    <div class="deadline-banner">
+      <div class="deadline-dot"></div>
+      <span>Picks lock at kickoff — <strong style="color:var(--text)">June 11, 2026 · 3:00 PM ET</strong></span>
+    </div>
+    <div class="section-title">Group Stage Picks</div>
+    <div class="instructions">
+      <strong>Click a team</strong> to cycle: <span style="color:var(--gold)">1ST</span> &rarr; <span style="color:var(--green)">2ND</span> &rarr; <span style="color:var(--blue)">3RD</span> &rarr; clear. Each group needs exactly one 1st and one 2nd. Pick 3rd in exactly <strong>8 of 12 groups</strong> — those are the third-place teams you think advance.
+    </div>
+    <div class="val-bar" id="val-bar">
+      <div class="val-item"><div class="vdot bad" id="vdot-groups"></div><span style="color:var(--text-muted)">1st+2nd picked: <strong id="v-groups">0/12</strong></span></div>
+      <div class="val-item"><div class="vdot bad" id="vdot-thirds"></div><span style="color:var(--text-muted)">3rd-place picks: <strong id="v-thirds">0/8</strong></span></div>
+    </div>
+    <div class="groups-grid" id="groups-grid"></div>
+    <div class="actions" style="justify-content:space-between;margin-top:1rem">
+      <button class="btn btn-ghost" onclick="goStep('identity')">&#8592; Back</button>
+      <button class="btn btn-primary" id="btn-review" onclick="goReview()" disabled style="opacity:0.4;cursor:not-allowed">Review Picks &rarr;</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: REVIEW + SUBMIT -->
+  <div class="step" id="step-review">
+    <div class="confirm-box">
+      <h2>Review Your Picks</h2>
+      <p id="review-intro">Submitting as <strong id="review-name"></strong> · <span id="review-email" style="color:var(--text-muted)"></span></p>
+
+      <div class="section-title" style="margin-top:1rem">Group Picks</div>
+      <div class="review-grid" id="review-grid"></div>
+
+      <div style="background:var(--surface2);border-radius:var(--radius);padding:10px 12px;margin-bottom:1.5rem;font-size:12px">
+        <div style="color:var(--text-dim);font-family:'DM Mono',monospace;margin-bottom:6px;font-size:10px">3RD PLACE ADVANCES</div>
+        <div id="review-thirds" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      </div>
+
+      <p style="font-size:11px;color:var(--text-dim);margin-bottom:1rem">Once submitted, contact the commissioner if you need to make any changes before the deadline.</p>
+
+      <div class="actions" style="justify-content:space-between">
+        <button class="btn btn-ghost" onclick="goStep('picks')">&#8592; Edit Picks</button>
+        <button class="btn btn-primary" id="btn-submit" onclick="submitPicks()">Submit Picks &#10003;</button>
+      </div>
+      <div id="submit-error" style="font-size:12px;color:#e74c3c;margin-top:.8rem;display:none"></div>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="step" id="step-success">
+    <div class="confirm-box" style="text-align:center">
+      <div class="success-icon">&#127942;</div>
+      <h2>You're In!</h2>
+      <p id="success-msg">Your picks have been saved. Good luck!</p>
+      <div style="background:var(--surface2);border-radius:var(--radius);padding:10px 14px;font-size:12px;color:var(--text-muted);margin-bottom:1.5rem;text-align:left">
+        <strong style="color:var(--text)">What happens next?</strong><br><br>
+        Once all picks are in and the tournament kicks off, the commissioner will share the standings link. Picks will be visible to everyone after the deadline.
+      </div>
+      <button class="btn btn-secondary" onclick="startOver()">Submit Different Picks</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ─── CONFIG — paste your Google Apps Script URL here ─────────
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzpH1CVAHzbfNE8PPOm-YpPwywQaxiU4dQl-_bFCQ-M7T55gE07YavJ72wUZFhi5t-Z/exec';
+// ─────────────────────────────────────────────────────────────
+
+const GROUPS = {
+  A:['Mexico','South Africa','Korea Republic','Czechia'],
+  B:['Canada','Switzerland','Qatar','Bosnia & Herz.'],
+  C:['Brazil','Morocco','Scotland','Haiti'],
+  D:['United States','Paraguay','Australia','Turkey'],
+  E:['Germany','Ecuador',"Cote d'Ivoire",'Curacao'],
+  F:['Netherlands','Japan','Tunisia','Sweden'],
+  G:['Belgium','Egypt','Iran','New Zealand'],
+  H:['Spain','Uruguay','Saudi Arabia','Cabo Verde'],
+  I:['France','Senegal','Norway','Iraq'],
+  J:['Argentina','Austria','Algeria','Jordan'],
+  K:['Portugal','Colombia','Uzbekistan','DR Congo'],
+  L:['England','Croatia','Ghana','Panama'],
+};
+const GKEYS = Object.keys(GROUPS);
+
+const FLAG_CODES = {
+  'Mexico':'mx','South Africa':'za','Korea Republic':'kr','Czechia':'cz',
+  'Canada':'ca','Switzerland':'ch','Qatar':'qa','Bosnia & Herz.':'ba',
+  'Brazil':'br','Morocco':'ma','Scotland':'gb-sct','Haiti':'ht',
+  'United States':'us','Paraguay':'py','Australia':'au','Turkey':'tr',
+  'Germany':'de','Ecuador':'ec',"Cote d'Ivoire":'ci','Curacao':'cw',
+  'Netherlands':'nl','Japan':'jp','Tunisia':'tn','Sweden':'se',
+  'Belgium':'be','Egypt':'eg','Iran':'ir','New Zealand':'nz',
+  'Spain':'es','Uruguay':'uy','Saudi Arabia':'sa','Cabo Verde':'cv',
+  'France':'fr','Senegal':'sn','Norway':'no','Iraq':'iq',
+  'Argentina':'ar','Austria':'at','Algeria':'dz','Jordan':'jo',
+  'Portugal':'pt','Colombia':'co','Uzbekistan':'uz','DR Congo':'cd',
+  'England':'gb-eng','Croatia':'hr','Ghana':'gh','Panama':'pa',
+};
+
+function flagImg(team, size){
+  size=size||20;
+  const code=FLAG_CODES[team];
+  if(!code) return `<span style="width:${size}px;height:${(size*.67)|0}px;display:inline-block;background:var(--surface2);border-radius:2px;flex-shrink:0"></span>`;
+  return `<img src="https://flagcdn.com/w40/${code}.png" width="${size}" height="${(size*.67)|0}" style="border-radius:2px;display:block;flex-shrink:0;vertical-align:middle" alt="">`;
+}
+
+// ─── STATE ───────────────────────────────────────────────────
+let playerName='', playerEmail='';
+// groupPicks[letter] = { teamName: rank }  rank = 1|2|3
+let groupPicks={};
+
+function rankOf(letter, rank){
+  const g=groupPicks[letter]||{};
+  return Object.keys(g).find(t=>g[t]===rank)||null;
+}
+function teamRank(letter, team){
+  return (groupPicks[letter]||{})[team]||0;
+}
+function count3rds(){
+  return GKEYS.filter(l=>rankOf(l,3)).length;
+}
+function groupsDone(){
+  return GKEYS.filter(l=>rankOf(l,1)&&rankOf(l,2)).length;
+}
+function isValid(){
+  return groupsDone()===12 && count3rds()===8;
+}
+
+// ─── STEP NAVIGATION ─────────────────────────────────────────
+const STEPS=['rules','identity','picks','review','success'];
+const STEP_LABELS=['Rules & scoring','Your details','Group picks','Review & submit','Done'];
+
+function goStep(id){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step-'+id).classList.add('active');
+  const idx=STEPS.indexOf(id);
+  const pct=Math.round((idx+1)/STEPS.length*100);
+  document.getElementById('progress-bar').style.width=pct+'%';
+  document.getElementById('progress-label').textContent=`Step ${idx+1} of 5 — ${STEP_LABELS[idx]}`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ─── STEP 1: IDENTITY ────────────────────────────────────────
+function submitIdentity(){
+  const name=document.getElementById('inp-name').value.trim();
+  const email=document.getElementById('inp-email').value.trim().toLowerCase();
+  let ok=true;
+  document.getElementById('err-name').style.display='none';
+  document.getElementById('err-email').style.display='none';
+  if(!name||name.split(' ').length<2){
+    document.getElementById('err-name').style.display='block';
+    ok=false;
+  }
+  if(!email||!email.includes('@')||!email.includes('.')){
+    document.getElementById('err-email').style.display='block';
+    ok=false;
+  }
+  if(!ok) return;
+  playerName=name;
+  playerEmail=email;
+  goStep('picks');
+  renderGroups();
+}
+
+// ─── STEP 2: PICKS ───────────────────────────────────────────
+function cycleTeam(letter, team){
+  if(!groupPicks[letter]) groupPicks[letter]={};
+  const gp=groupPicks[letter];
+  const cur=teamRank(letter, team);
+  const has1=!!rankOf(letter,1);
+  const has2=!!rankOf(letter,2);
+  const has3=!!rankOf(letter,3);
+  const thirds=count3rds();
+
+  if(cur===0){
+    if(!has1) gp[team]=1;
+    else if(!has2) gp[team]=2;
+    else if(!has3&&thirds<8) gp[team]=3;
+    else if(!has3&&thirds>=8){ showToast('Already have 8 third-place picks','error'); return; }
+    else{ showToast('Clear a pick in this group first','error'); return; }
+  } else if(cur===1){
+    if(!has2) gp[team]=2;
+    else if(!has3&&thirds<8) gp[team]=3;
+    else delete gp[team];
+  } else if(cur===2){
+    if(!has3&&thirds<8) gp[team]=3;
+    else delete gp[team];
+  } else {
+    delete gp[team];
+  }
+  renderGroups();
+}
+
+function renderGroups(){
+  const grid=document.getElementById('groups-grid');
+  grid.innerHTML='';
+  const gd=groupsDone(), th=count3rds();
+  const gOk=gd===12, tOk=th===8;
+
+  // validation bar
+  document.getElementById('vdot-groups').className='vdot '+(gOk?'ok':'bad');
+  document.getElementById('v-groups').textContent=gd+'/12';
+  document.getElementById('v-groups').style.color=gOk?'var(--green)':'var(--text)';
+  document.getElementById('vdot-thirds').className='vdot '+(tOk?'ok':'bad');
+  document.getElementById('v-thirds').textContent=th+'/8';
+  document.getElementById('v-thirds').style.color=tOk?'var(--green)':'var(--text)';
+
+  const btn=document.getElementById('btn-review');
+  const valid=isValid();
+  btn.disabled=!valid;
+  btn.style.opacity=valid?'1':'0.4';
+  btn.style.cursor=valid?'pointer':'not-allowed';
+
+  GKEYS.forEach(letter=>{
+    const teams=GROUPS[letter];
+    const has1=!!rankOf(letter,1), has2=!!rankOf(letter,2), has3=!!rankOf(letter,3);
+    const done=has1&&has2;
+    const statusTxt=done?(has3?'1 · 2 · 3':'1 · 2'):has1||has2?'partial':'—';
+    const card=document.createElement('div');
+    card.className='group-card';
+    let rows='';
+    teams.forEach(team=>{
+      const rank=teamRank(letter,team);
+      const cls=rank===1?' r1':rank===2?' r2':rank===3?' r3':'';
+      const badge=rank?`<span class="rank-badge rb${rank}">${rank===1?'1ST':rank===2?'2ND':'3RD'}</span>`:'';
+      rows+=`<div class="team-item${cls}" onclick="cycleTeam('${letter}','${team.replace(/'/g,"\\'")}')">
+        ${flagImg(team,22)}
+        <span class="team-name-txt">${team}</span>
+        ${badge}
+      </div>`;
+    });
+    card.innerHTML=`<div class="group-header"><span class="group-letter">Group ${letter}</span><span class="group-status ${done?'ok':''}">${statusTxt}</span></div><div>${rows}</div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ─── STEP 3: REVIEW ──────────────────────────────────────────
+function goReview(){
+  if(!isValid()) return;
+
+  document.getElementById('review-name').textContent=playerName;
+  document.getElementById('review-email').textContent=playerEmail;
+
+  // group picks grid
+  const rg=document.getElementById('review-grid');
+  rg.innerHTML='';
+  GKEYS.forEach(letter=>{
+    const t1=rankOf(letter,1), t2=rankOf(letter,2), t3=rankOf(letter,3);
+    const f1=t1?flagImg(t1,14):'', f2=t2?flagImg(t2,14):'', f3=t3?flagImg(t3,14):'';
+    rg.innerHTML+=`<div class="review-card">
+      <div class="review-group-lbl">GROUP ${letter}</div>
+      <div class="review-pick-row">${f1}<span style="color:var(--gold);font-size:12px">${t1||'—'}</span><span style="color:var(--text-dim);font-size:10px;margin-left:auto">1st</span></div>
+      <div class="review-pick-row">${f2}<span style="color:var(--green);font-size:12px">${t2||'—'}</span><span style="color:var(--text-dim);font-size:10px;margin-left:auto">2nd</span></div>
+      ${t3?`<div class="review-pick-row">${f3}<span style="color:var(--blue);font-size:12px">${t3}</span><span style="color:var(--text-dim);font-size:10px;margin-left:auto">3rd</span></div>`:''}
+    </div>`;
+  });
+
+  // thirds chips
+  const rt=document.getElementById('review-thirds');
+  rt.innerHTML='';
+  GKEYS.filter(l=>rankOf(l,3)).forEach(l=>{
+    const team=rankOf(l,3);
+    rt.innerHTML+=`<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(91,155,213,0.12);border:1px solid rgba(91,155,213,0.25);border-radius:4px;padding:3px 8px;font-size:11px;color:var(--blue)">${flagImg(team,12)} ${team}</span>`;
+  });
+
+  goStep('review');
+}
+
+// ─── SUBMIT TO GOOGLE SHEET ───────────────────────────────────
+async function submitPicks(){
+  const btn=document.getElementById('btn-submit');
+  const errEl=document.getElementById('submit-error');
+  errEl.style.display='none';
+  btn.disabled=true;
+  btn.textContent='Submitting…';
+
+  // Build the payload
+  // Each group: 1st, 2nd, (3rd or blank)
+  const payload={
+    name: playerName,
+    email: playerEmail,
+    timestamp: new Date().toISOString(),
+  };
+  GKEYS.forEach(l=>{
+    payload[`${l}_1st`] = rankOf(l,1)||'';
+    payload[`${l}_2nd`] = rankOf(l,2)||'';
+    payload[`${l}_3rd`] = rankOf(l,3)||'';
+  });
+
+  if(!SHEET_URL||SHEET_URL==='YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'){
+    // DEV MODE: just show success without actually posting
+    console.log('DEV MODE — would send:', payload);
+    showSuccess();
+    return;
+  }
+
+  try{
+    const res=await fetch(SHEET_URL,{
+      method:'POST',
+      mode:'no-cors', // Apps Script requires no-cors
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload),
+    });
+    // no-cors means we can't read the response — assume success
+    showSuccess();
+  }catch(err){
+    btn.disabled=false;
+    btn.textContent='Submit Picks ✓';
+    errEl.textContent='Submission failed. Check your connection and try again.';
+    errEl.style.display='block';
+  }
+}
+
+function showSuccess(){
+  document.getElementById('success-msg').textContent=
+    `Picks saved for ${playerName}. Good luck! 🤞`;
+  goStep('success');
+}
+
+function startOver(){
+  playerName=''; playerEmail='';
+  groupPicks={};
+  document.getElementById('inp-name').value='';
+  document.getElementById('inp-email').value='';
+  goStep('rules');
+}
+
+// ─── TOAST ───────────────────────────────────────────────────
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+(type||'');
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>{ t.className='toast '+(type||''); },2800);
+}
+
+// ─── INIT ────────────────────────────────────────────────────
+document.getElementById('inp-name').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('inp-email').focus(); });
+document.getElementById('inp-email').addEventListener('keydown',e=>{ if(e.key==='Enter') submitIdentity(); });
+</script>
+</body>
+</html>
