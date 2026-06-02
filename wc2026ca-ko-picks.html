@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/flags/4x3/ca.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Cup 2026 Pool — Canada Edition — KO Picks</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+<style>
+:root{
+  --gold:#C9A84C;--gold-light:#E8C96A;
+  --green:#2D9E56;--red:#C0392B;--blue:#5B9BD5;
+  --bg:#0B0E0B;--surface:#111511;--surface2:#182018;
+  --border:rgba(201,168,76,0.15);--border-bright:rgba(201,168,76,0.4);
+  --text:#F0EDE4;--text-muted:#8A8A7A;--text-dim:#4A4A3A;
+  --radius:6px;--radius-lg:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;height:54px;gap:10px;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--gold);}
+.logo span{color:var(--text-muted);font-size:13px;font-family:'DM Sans',sans-serif;font-weight:300;letter-spacing:0;margin-left:8px;}
+.main{max-width:820px;margin:0 auto;padding:2rem 1.2rem 4rem;}
+.progress-wrap{background:var(--surface2);border-radius:100px;height:6px;margin-bottom:.5rem;overflow:hidden;}
+.progress-bar{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--gold),var(--green));transition:width .3s;}
+.progress-label{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace;margin-bottom:1.5rem;}
+.step{display:none;}.step.active{display:block;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;max-width:560px;margin:0 auto;}
+.card h2{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:var(--gold);margin-bottom:.9rem;display:flex;align-items:center;gap:10px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.form-group{margin-bottom:1rem;}
+.form-label{font-size:11px;color:var(--text-muted);margin-bottom:5px;display:block;font-weight:500;text-transform:uppercase;letter-spacing:.06em;}
+.form-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;transition:border-color .15s;}
+.form-input:focus{outline:none;border-color:var(--gold);}
+.form-input::placeholder{color:var(--text-dim);}
+.form-error{font-size:12px;color:#e74c3c;margin-top:5px;display:none;}
+.btn{padding:9px 20px;border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:var(--gold);color:#0B0E0B;}.btn-primary:hover:not(:disabled){background:var(--gold-light);}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-ghost{background:none;border:1px solid var(--border);color:var(--text-muted);}.btn-ghost:hover{border-color:var(--border-bright);color:var(--text);}
+.deadline-banner{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px;font-size:12px;color:var(--text-muted);margin-bottom:1.5rem;display:flex;align-items:center;gap:8px;}
+.deadline-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0;}
+.deadline-dot.expired{background:var(--red);box-shadow:0 0 6px var(--red);}
+.instructions{background:var(--surface2);border-left:3px solid var(--gold);border-radius:0 var(--radius) var(--radius) 0;padding:9px 13px;font-size:12px;color:var(--text-muted);margin-bottom:1.2rem;line-height:1.6;}
+.instructions strong{color:var(--text);}
+
+/* BRACKET */
+.bracket-scroll{padding-bottom:1rem;}
+
+.bracket-round{flex-shrink:0;}
+.round-header{font-size:10px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;padding:0 6px 10px;text-align:center;}
+.round-matches{display:flex;flex-direction:column;}
+.b-match{margin:3px 5px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s;min-width:130px;}
+.b-match:hover{border-color:var(--border-bright);}
+.b-match.locked{cursor:not-allowed;opacity:0.6;}
+.b-team{display:flex;align-items:center;gap:5px;padding:6px 8px;font-size:11px;border-bottom:1px solid var(--border);transition:background .1s;}
+.b-team:last-child{border-bottom:none;}
+.b-team.picked{background:rgba(201,168,76,0.1);color:var(--gold);font-weight:500;}
+.b-team.tbd{color:var(--text-dim);font-style:italic;}
+.b-team img{border-radius:2px;flex-shrink:0;}
+.star{margin-left:auto;font-size:9px;color:var(--gold);}
+
+/* REVIEW */
+.review-round{margin-bottom:1rem;}
+.review-round-label{font-size:11px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.review-picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;}
+.review-pick{background:var(--surface2);border-radius:var(--radius);padding:7px 10px;font-size:12px;display:flex;align-items:center;gap:6px;}
+
+/* VAL BAR */
+.val-bar{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px;font-size:12px;margin-bottom:1.2rem;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.vdot{width:7px;height:7px;border-radius:50%;}
+.vdot.ok{background:var(--green);}
+.vdot.bad{background:var(--red);}
+
+/* SUCCESS */
+.success-icon{font-size:56px;text-align:center;margin-bottom:1rem;}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--surface2);border:1px solid var(--border-bright);border-radius:var(--radius);padding:9px 15px;font-size:13px;color:var(--text);z-index:300;transform:translateY(80px);opacity:0;transition:all .25s;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(45,158,86,.5);color:var(--green);}
+.toast.error{border-color:rgba(192,57,43,.5);color:#e74c3c;}
+</style>
+</head>
+<body>
+<header class="header">
+  <img src="https://flagcdn.com/w40/ca.png" height="20" style="border-radius:2px" alt="">
+  <div class="logo">World Cup 2026 Pool <span>Canada Edition — KO Picks</span></div>
+  <img src="https://flagcdn.com/w40/ca.png" height="20" style="border-radius:2px" alt="">
+</header>
+<div class="toast" id="toast"></div>
+<main class="main">
+  <div style="margin-bottom:1.5rem">
+    <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:20%"></div></div>
+    <div class="progress-label" id="progress-label">Step 1 of 5 — Rules &amp; scoring</div>
+  </div>
+
+  <!-- STEP 1: RULES -->
+  <div class="step active" id="step-rules">
+    <div class="card" style="max-width:560px">
+      <h2>Knockout Round Picks</h2>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:1.25rem">
+        <img src="https://flagcdn.com/w40/ca.png" height="16" style="border-radius:2px" alt="">
+        <span style="color:var(--gold);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase">Canada Edition</span>
+        <img src="https://flagcdn.com/w40/ca.png" height="16" style="border-radius:2px" alt="">
+      </div>
+      <div style="background:var(--surface2);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:1rem">
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">Knockout Scoring</div>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.9">
+          Pick the winner of every match from the Round of 32 through the Final.<br>
+          Points increase each round — getting a Final pick right is worth 16× a Ro32 pick.<br><br>
+          <strong style="color:var(--text)">No third place match</strong> — 31 picks total.
+        </div>
+        <div style="margin-top:10px;font-size:12px">
+          <div style="display:grid;grid-template-columns:1fr auto auto;gap:4px 10px;align-items:center;margin-bottom:2px">
+            <span style="font-size:10px;color:var(--text-dim);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em"></span>
+            <span style="font-size:10px;color:var(--text-dim);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;text-align:right">per game</span>
+            <span style="font-size:10px;color:var(--text-dim);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;text-align:right">round total</span>
+          </div>
+          <div style="background:var(--surface);border-radius:var(--radius);padding:8px 10px;display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;margin-bottom:4px">
+            <span style="color:var(--text-muted)">Round of 32 <span style="color:var(--text-dim);font-size:11px">(16 games)</span></span>
+            <span style="color:var(--text-muted);font-family:'DM Mono',monospace;text-align:right">2 pts</span>
+            <span style="color:var(--gold);font-family:'DM Mono',monospace;font-weight:500;text-align:right">= 32 pts</span>
+          </div>
+          <div style="background:var(--surface);border-radius:var(--radius);padding:8px 10px;display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;margin-bottom:4px">
+            <span style="color:var(--text-muted)">Round of 16 <span style="color:var(--text-dim);font-size:11px">(8 games)</span></span>
+            <span style="color:var(--text-muted);font-family:'DM Mono',monospace;text-align:right">4 pts</span>
+            <span style="color:var(--gold);font-family:'DM Mono',monospace;font-weight:500;text-align:right">= 32 pts</span>
+          </div>
+          <div style="background:var(--surface);border-radius:var(--radius);padding:8px 10px;display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;margin-bottom:4px">
+            <span style="color:var(--text-muted)">Quarterfinals <span style="color:var(--text-dim);font-size:11px">(4 games)</span></span>
+            <span style="color:var(--text-muted);font-family:'DM Mono',monospace;text-align:right">8 pts</span>
+            <span style="color:var(--gold);font-family:'DM Mono',monospace;font-weight:500;text-align:right">= 32 pts</span>
+          </div>
+          <div style="background:var(--surface);border-radius:var(--radius);padding:8px 10px;display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;margin-bottom:4px">
+            <span style="color:var(--text-muted)">Semifinals <span style="color:var(--text-dim);font-size:11px">(2 games)</span></span>
+            <span style="color:var(--text-muted);font-family:'DM Mono',monospace;text-align:right">16 pts</span>
+            <span style="color:var(--gold);font-family:'DM Mono',monospace;font-weight:500;text-align:right">= 32 pts</span>
+          </div>
+          <div style="background:var(--surface);border-radius:var(--radius);padding:8px 10px;display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center">
+            <span style="color:var(--text-muted)">Final <span style="color:var(--text-dim);font-size:11px">(1 game)</span></span>
+            <span style="color:var(--text-muted);font-family:'DM Mono',monospace;text-align:right">32 pts</span>
+            <span style="color:var(--gold);font-family:'DM Mono',monospace;font-weight:500;text-align:right">= 32 pts</span>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:1rem">
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">Group Stage Scoring (recap)</div>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.8">
+          <span style="color:var(--text);font-weight:500">+1 pt</span> per team correctly picked to advance<br>
+          <span style="color:var(--text);font-weight:500">+1 pt</span> bonus for correct finishing position (1st / 2nd / 3rd)<br>
+          Maximum <strong style="color:var(--gold)">64 pts</strong> in the group stage
+        </div>
+      </div>
+      <div style="background:var(--surface2);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:1.5rem">
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">Prize Payout</div>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1;background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);line-height:1">50%</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px">1st Place</div></div>
+          <div style="flex:1;background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#A8A8A8;line-height:1">30%</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px">2nd Place</div></div>
+          <div style="flex:1;background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#8B6914;line-height:1">20%</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px">3rd Place</div></div>
+          <div style="flex:1;background:var(--surface);border-radius:var(--radius);padding:10px;text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:#e74c3c;line-height:1.2">FORBSIE</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px">4th Place</div></div>
+        </div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:8px">Tied places split the combined payout equally. No tiebreakers.</div>
+      </div>
+      <button class="btn btn-primary" onclick="goStep('identity')" style="width:100%">I understand — Enter My Details &rarr;</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: IDENTITY -->
+  <div class="step" id="step-identity">
+    <div class="card">
+      <h2>Your Details</h2>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:1.25rem">Use the same name and email as your group stage picks so your scores can be combined.</p>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" id="inp-name" placeholder="e.g. Steve Irwin" autocomplete="name">
+        <div class="form-error" id="err-name">Please enter your full name (first and last).</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" id="inp-email" type="email" placeholder="e.g. steve@example.com" autocomplete="email">
+        <div class="form-error" id="err-email">Please enter a valid email address.</div>
+      </div>
+      <div style="margin-top:1.5rem;display:flex;gap:10px">
+        <button class="btn btn-ghost" onclick="goStep('rules')" style="flex:0 0 auto">&#8592; Back</button>
+        <button class="btn btn-primary" onclick="submitIdentity()" style="flex:1">Continue to Bracket &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: BRACKET PICKS -->
+  <div class="step" id="step-bracket">
+    <div class="deadline-banner">
+      <div class="deadline-dot" id="deadline-dot"></div>
+      <span id="deadline-text">Picks lock <strong style="color:var(--text)">June 28, 2026 · 3:00 PM EDT</strong></span>
+    </div>
+    <div class="section-title">Bracket Picks</div>
+    <div class="instructions">
+      <strong>Click a team</strong> to pick them to win that match. Your pick carries forward — if you pick a team to win the Ro32, they appear in your Ro16 slot. You can change any pick at any time before the deadline.
+    </div>
+    <div class="val-bar" id="val-bar">
+      <div class="val-item" style="display:flex;align-items:center;gap:5px"><div class="vdot bad" id="vdot-picks"></div><span style="color:var(--text-muted)">Picks made: <strong id="v-picks">0/31</strong></span></div>
+    </div>
+    <div class="bracket-scroll">
+      <div id="bracket-grid" style="position:relative;overflow-x:auto"></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:space-between;margin-top:1.5rem">
+      <button class="btn btn-ghost" onclick="goStep('identity')">&#8592; Back</button>
+      <button class="btn btn-primary" id="btn-review" onclick="goReview()" disabled style="opacity:0.4;cursor:not-allowed">Review Picks &rarr;</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: REVIEW -->
+  <div class="step" id="step-review">
+    <div class="card" style="max-width:680px">
+      <h2>Review Your Picks</h2>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:1.25rem">Submitting as <strong id="review-name"></strong> &middot; <span id="review-email" style="color:var(--text-muted)"></span></p>
+      <div id="review-content"></div>
+      <p style="font-size:11px;color:var(--text-dim);margin-bottom:1rem">Contact the commissioner if you need changes before the deadline.</p>
+      <div style="display:flex;gap:10px;justify-content:space-between">
+        <button class="btn btn-ghost" onclick="goStep('bracket')">&#8592; Edit Picks</button>
+        <button class="btn btn-primary" id="btn-submit" onclick="submitPicks()">Submit Picks &#10003;</button>
+      </div>
+      <div id="submit-error" style="font-size:12px;color:#e74c3c;margin-top:.8rem;display:none"></div>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="step" id="step-success">
+    <div class="card" style="text-align:center">
+      <div class="success-icon">&#127942;</div>
+      <h2>You're In!</h2>
+      <p id="success-msg" style="margin-bottom:1.5rem">Your KO picks have been saved. Good luck!</p>
+      <div style="background:var(--surface2);border-radius:var(--radius);padding:10px 14px;font-size:12px;color:var(--text-muted);margin-bottom:1.5rem;text-align:left">
+        <strong style="color:var(--text)">What happens next?</strong><br><br>
+        The commissioner will share the standings link once the bracket locks. Your group stage and KO picks will be combined for the final standings.
+      </div>
+      <button class="btn btn-ghost" onclick="window.location.reload()">&#8592; Start Over</button>
+    </div>
+  </div>
+</main>
+
+<script>
+// ─── CONFIG ──────────────────────────────────────────────────
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzpH1CVAHzbfNE8PPOm-YpPwywQaxiU4dQl-_bFCQ-M7T55gE07YavJ72wUZFhi5t-Z/exec';
+const DEADLINE = new Date('2026-06-28T19:00:00Z'); // 3pm EDT = 19:00 UTC
+
+// ─── FLAG CODES ──────────────────────────────────────────────
+const FLAG_CODES = {
+  'Mexico':'mx','South Africa':'za','Korea Republic':'kr','Czechia':'cz',
+  'Canada':'ca','Switzerland':'ch','Qatar':'qa','Bosnia & Herz.':'ba',
+  'Brazil':'br','Morocco':'ma','Scotland':'gb-sct','Haiti':'ht',
+  'United States':'us','Paraguay':'py','Australia':'au','Turkey':'tr',
+  'Germany':'de','Ecuador':'ec',"Cote d'Ivoire":'ci','Curacao':'cw',
+  'Netherlands':'nl','Japan':'jp','Tunisia':'tn','Sweden':'se',
+  'Belgium':'be','Egypt':'eg','Iran':'ir','New Zealand':'nz',
+  'Spain':'es','Uruguay':'uy','Saudi Arabia':'sa','Cabo Verde':'cv',
+  'France':'fr','Senegal':'sn','Norway':'no','Iraq':'iq',
+  'Argentina':'ar','Austria':'at','Algeria':'dz','Jordan':'jo',
+  'Portugal':'pt','Colombia':'co','Uzbekistan':'uz','DR Congo':'cd',
+  'England':'gb-eng','Croatia':'hr','Ghana':'gh','Panama':'pa',
+};
+function fi(team,size=18){
+  const c=FLAG_CODES[team];
+  if(!c) return `<span style="width:${size}px;height:${(size*.67)|0}px;display:inline-block;background:var(--surface2);border-radius:2px;flex-shrink:0"></span>`;
+  const h=(size*.67)|0;
+  return `<img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/flags/4x3/${c}.svg" width="${size}" height="${h}" style="border-radius:2px;display:block;flex-shrink:0;vertical-align:middle" alt="">`;
+}
+
+
+const FIFA_ABBR = {
+  'Mexico':'MEX','South Africa':'RSA','Korea Republic':'KOR','Czechia':'CZE',
+  'Canada':'CAN','Switzerland':'SUI','Qatar':'QAT','Bosnia & Herz.':'BIH',
+  'Brazil':'BRA','Morocco':'MAR','Scotland':'SCO','Haiti':'HAI',
+  'United States':'USA','Paraguay':'PAR','Australia':'AUS','Turkey':'TUR',
+  'Germany':'GER','Ecuador':'ECU',"Cote d'Ivoire":'CIV','Curacao':'CUW',
+  'Netherlands':'NED','Japan':'JPN','Tunisia':'TUN','Sweden':'SWE',
+  'Belgium':'BEL','Egypt':'EGY','Iran':'IRN','New Zealand':'NZL',
+  'Spain':'ESP','Uruguay':'URU','Saudi Arabia':'KSA','Cabo Verde':'CPV',
+  'France':'FRA','Senegal':'SEN','Norway':'NOR','Iraq':'IRQ',
+  'Argentina':'ARG','Austria':'AUT','Algeria':'ALG','Jordan':'JOR',
+  'Portugal':'POR','Colombia':'COL','Uzbekistan':'UZB','DR Congo':'COD',
+  'England':'ENG','Croatia':'CRO','Ghana':'GHA','Panama':'PAN',
+};
+function abbr(team){ return FIFA_ABBR[team]||team; }
+
+// ─── RESOLVED TEAMS ─────────────────────────────────────────
+// Paste the exported line from the standings admin here:
+const RESOLVED_TEAMS = {"1A":"Mexico","2A":"South Africa","1B":"Canada","2B":"Switzerland","1C":"Brazil","2C":"Morocco","1D":"United States","2D":"Paraguay","1E":"Germany","2E":"Ecuador","1F":"Netherlands","2F":"Japan","1G":"Belgium","2G":"Egypt","1H":"Spain","2H":"Uruguay","1I":"France","2I":"Senegal","1J":"Argentina","2J":"Austria","1K":"Portugal","2K":"Colombia","1L":"England","2L":"Croatia","3A/B/C/D/F":"Scotland","3C/D/F/G/H":"Sweden","3B/E/F/I/J":"Qatar","3A/E/H/I/J":"Czechia","3A/B/C/D/G/H":"Australia","3C/E/F/H/I":"Saudi Arabia","3E/F/G/I/J":"New Zealand","3D/E/H/I/J/K":"Cote d'Ivoire"};
+
+// ─── RO32 BRACKET STRUCTURE ──────────────────────────────────
+// Each match: id, home slot label, away slot label, date, venue
+// Slot labels use FIFA official notation
+const RO32 = [
+  // Match 73-88 (Ro32)
+  {id:'r32-0', home:'1E', away:'3A/B/C/D/F',   date:'Jun 28', venue:'Foxborough'},
+  {id:'r32-1', home:'1I', away:'3C/D/F/G/H',   date:'Jun 29', venue:'East Rutherford'},
+  {id:'r32-2', home:'2A', away:'2B',             date:'Jun 28', venue:'Inglewood'},
+  {id:'r32-3', home:'1F', away:'2C',             date:'Jun 29', venue:'Guadalupe'},
+  {id:'r32-4', home:'2K', away:'2L',             date:'Jul 1',  venue:'Toronto'},
+  {id:'r32-5', home:'1H', away:'2J',             date:'Jul 2',  venue:'Inglewood'},
+  {id:'r32-6', home:'1D', away:'3B/E/F/I/J',    date:'Jul 1',  venue:'Santa Clara'},
+  {id:'r32-7', home:'1G', away:'3A/E/H/I/J',    date:'Jul 1',  venue:'Seattle'},
+  {id:'r32-8', home:'1C', away:'2F',             date:'Jun 29', venue:'Houston'},
+  {id:'r32-9', home:'2E', away:'2I',             date:'Jun 30', venue:'Arlington'},
+  {id:'r32-10',home:'1A', away:'3C/E/F/H/I',    date:'Jun 30', venue:'Mexico City'},
+  {id:'r32-11',home:'1L', away:'3D/E/H/I/J/K',  date:'Jul 1',  venue:'Atlanta'},
+  {id:'r32-12',home:'1J', away:'2H',             date:'Jul 3',  venue:'Miami Gardens'},
+  {id:'r32-13',home:'2D', away:'2G',             date:'Jul 3',  venue:'Arlington'},
+  {id:'r32-14',home:'1B', away:'3E/F/G/I/J',    date:'Jul 2',  venue:'Vancouver'},
+  {id:'r32-15',home:'1K', away:'3A/B/C/D/G/H',  date:'Jul 3',  venue:'Kansas City'},
+];
+
+// Ro16 matchups (winners of Ro32 pairs)
+const RO16_PAIRS = [
+  [0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15]
+];
+// QF pairs (winners of Ro16)
+const QF_PAIRS = [[0,1],[2,3],[4,5],[6,7]];
+// SF pairs (winners of QF)
+const SF_PAIRS = [[0,1],[2,3]];
+// Final: winners of SFs
+
+const ROUND_PTS = {ro32:4, ro16:8, qf:16, sf:32, final:64};
+const ROUND_LABELS = {ro32:'Round of 32', ro16:'Round of 16', qf:'Quarterfinals', sf:'Semifinals', final:'Final'};
+
+// ─── STATE ───────────────────────────────────────────────────
+let playerName = '', playerEmail = '';
+// picks[matchId] = teamSlotLabel or actual team name
+let picks = {};
+// resolvedTeams[slotLabel] = actual team name (set by admin in standings page, loaded via sheet)
+let resolvedTeams = {};
+
+// ─── DEADLINE ────────────────────────────────────────────────
+function isExpired(){ return new Date() > DEADLINE; }
+function updateDeadlineBanner(){
+  const dot = document.getElementById('deadline-dot');
+  const txt = document.getElementById('deadline-text');
+  if(isExpired()){
+    dot.className = 'deadline-dot expired';
+    txt.innerHTML = '&#x1F512; Picks are <strong style="color:#e74c3c">closed</strong> — deadline passed June 28, 2026 at 3:00 PM EDT';
+  }
+}
+
+// ─── STEPS ───────────────────────────────────────────────────
+const STEPS = ['rules','identity','bracket','review','success'];
+const STEP_LABELS = ['Rules & scoring','Your details','Bracket picks','Review & submit','Done'];
+
+function goStep(id){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step-'+id).classList.add('active');
+  const idx = STEPS.indexOf(id);
+  document.getElementById('progress-bar').style.width = Math.round((idx+1)/STEPS.length*100)+'%';
+  document.getElementById('progress-label').textContent = `Step ${idx+1} of 5 — ${STEP_LABELS[idx]}`;
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='bracket'){ updateDeadlineBanner(); renderBracket(); }
+}
+
+function submitIdentity(){
+  const name = document.getElementById('inp-name').value.trim();
+  const email = document.getElementById('inp-email').value.trim().toLowerCase();
+  let ok = true;
+  document.getElementById('err-name').style.display='none';
+  document.getElementById('err-email').style.display='none';
+  if(!name||name.split(' ').length<2){ document.getElementById('err-name').style.display='block'; ok=false; }
+  if(!email||!email.includes('@')||!email.includes('.')){ document.getElementById('err-email').style.display='block'; ok=false; }
+  if(!ok) return;
+  playerName = name; playerEmail = email;
+  goStep('bracket');
+}
+
+// ─── BRACKET ENGINE ──────────────────────────────────────────
+// Build the full bracket tree from picks
+function getSlotTeam(slotLabel){
+  if(RESOLVED_TEAMS[slotLabel]) return RESOLVED_TEAMS[slotLabel];
+  if(resolvedTeams[slotLabel]) return resolvedTeams[slotLabel];
+  return null;
+}
+
+function getMatchWinner(matchId){
+  return picks[matchId] || null;
+}
+
+// For each Ro16 match, the "teams" are winners of two Ro32 matches
+function buildRounds(){
+  // Returns array of rounds, each an array of matches {id, home, away, homeName, awayName}
+  const ro32 = RO32.map((m,i) => {
+    const homeName = getSlotTeam(m.home);
+    const awayName = getSlotTeam(m.away);
+    return {id:m.id, round:'ro32', homeSlot:m.home, awaySlot:m.away, homeName, awayName, date:m.date, venue:m.venue};
+  });
+
+  const ro16 = RO16_PAIRS.map((pair,i) => {
+    const m0 = ro32[pair[0]], m1 = ro32[pair[1]];
+    const homeName = getMatchWinner(m0.id);
+    const awayName = getMatchWinner(m1.id);
+    return {id:`r16-${i}`, round:'ro16', srcA:m0.id, srcB:m1.id, homeName, awayName};
+  });
+
+  const qf = QF_PAIRS.map((pair,i) => {
+    const m0 = ro16[pair[0]], m1 = ro16[pair[1]];
+    const homeName = getMatchWinner(m0.id);
+    const awayName = getMatchWinner(m1.id);
+    return {id:`qf-${i}`, round:'qf', srcA:m0.id, srcB:m1.id, homeName, awayName};
+  });
+
+  const sf = SF_PAIRS.map((pair,i) => {
+    const m0 = qf[pair[0]], m1 = qf[pair[1]];
+    const homeName = getMatchWinner(m0.id);
+    const awayName = getMatchWinner(m1.id);
+    return {id:`sf-${i}`, round:'sf', srcA:m0.id, srcB:m1.id, homeName, awayName};
+  });
+
+  const final = [{
+    id:'final-0', round:'final',
+    homeName: getMatchWinner('sf-0'),
+    awayName: getMatchWinner('sf-1'),
+  }];
+
+  return {ro32, ro16, qf, sf, final};
+}
+
+function pickTeam(matchId, teamName){
+  if(isExpired()) return showToast('Picks are closed','error');
+  if(!teamName) return;
+  picks[matchId] = teamName;
+  // Cascade: if this team was picked in a downstream match for the other slot, clear it
+  clearDownstream(matchId, teamName);
+  renderBracket();
+}
+
+function clearDownstream(changedMatchId, newWinner){
+  // Find any match that had this matchId as a source and a DIFFERENT pick
+  const rounds = buildRounds();
+  const allMatches = [...rounds.ro16, ...rounds.qf, ...rounds.sf, ...rounds.final];
+  allMatches.forEach(m => {
+    if(m.srcA === changedMatchId || m.srcB === changedMatchId){
+      const currentPick = picks[m.id];
+      if(currentPick && currentPick !== newWinner){
+        // Check if the current pick could still be from the other source
+        const otherSrc = m.srcA === changedMatchId ? m.srcB : m.srcA;
+        const otherPick = picks[otherSrc];
+        if(currentPick !== otherPick){
+          delete picks[m.id];
+          clearDownstream(m.id, null);
+        }
+      }
+    }
+  });
+}
+
+
+function getMatchSlotLabels(matchId){
+  if(matchId.startsWith('r32-')){
+    const i=parseInt(matchId.split('-')[1]);
+    const m=RO32[i];
+    return [m.home, m.away];
+  }
+  return ['TBD','TBD'];
+}
+
+function renderBracket(){
+  const rounds = buildRounds();
+
+  let totalPicks = Object.keys(picks).length;
+  const needed = 31;
+  const ok = totalPicks === needed;
+  document.getElementById('vdot-picks').className = 'vdot '+(ok?'ok':'bad');
+  document.getElementById('v-picks').textContent = totalPicks+'/'+needed;
+  document.getElementById('v-picks').style.color = ok?'var(--green)':'var(--text)';
+  const btn = document.getElementById('btn-review');
+  btn.disabled = !ok;
+  btn.style.opacity = ok?'1':'0.4';
+  btn.style.cursor = ok?'pointer':'not-allowed';
+
+  const isMobile=window.innerWidth<600;
+  const MATCH_W=isMobile?110:130, MATCH_H=46, COL_W=isMobile?120:142, HEADER_H=40;
+  const TOTAL_H=16*MATCH_H + 15*6;
+  const SLOT_H=TOTAL_H/16;
+
+  const ROUNDS=[
+    {key:'ro32', matches:rounds.ro32, label:'Round of 32', pts:4},
+    {key:'ro16', matches:rounds.ro16, label:'Rd of 16',    pts:8},
+    {key:'qf',   matches:rounds.qf,   label:'QF',          pts:16},
+    {key:'sf',   matches:rounds.sf,   label:'SF',          pts:32},
+    {key:'final',matches:rounds.final,label:'Final',       pts:64},
+  ];
+
+  function matchCY(ri, mi){
+    if(ri===0) return (mi+0.5)*SLOT_H;
+    const span=Math.pow(2,ri);
+    const first=mi*span, last=first+span-1;
+    return ((first+last+1)/2)*SLOT_H;
+  }
+  function matchTop(ri,mi){ return matchCY(ri,mi)-MATCH_H/2; }
+
+  const totalW=ROUNDS.length*COL_W+20;
+  let html=`<div style="position:relative;width:${totalW}px;height:${TOTAL_H+HEADER_H+20}px">`;
+
+  // SVG connector lines
+  html+=`<svg style="position:absolute;top:${HEADER_H}px;left:0;width:${totalW}px;height:${TOTAL_H}px;overflow:visible;pointer-events:none" xmlns="http://www.w3.org/2000/svg">`;
+  ROUNDS.forEach((_,ri)=>{
+    if(ri===0) return;
+    ROUNDS[ri].matches.forEach((_,mi)=>{
+      const cy=matchCY(ri,mi);
+      const cy0=matchCY(ri-1,mi*2);
+      const cy1=matchCY(ri-1,mi*2+1);
+      const x1=(ri-1)*COL_W+MATCH_W+8;
+      const x2=ri*COL_W+4;
+      const xm=(x1+x2)/2;
+      html+=`<path d="M${x1},${cy0} H${xm} V${cy} H${x2}" fill="none" stroke="rgba(201,168,76,0.15)" stroke-width="1.5"/>`;
+      html+=`<path d="M${x1},${cy1} H${xm} V${cy} H${x2}" fill="none" stroke="rgba(201,168,76,0.15)" stroke-width="1.5"/>`;
+    });
+  });
+  html+=`</svg>`;
+
+  // Matches
+  ROUNDS.forEach(({key,matches,label,pts},ri)=>{
+    const colX=ri*COL_W;
+    html+=`<div style="position:absolute;top:0;left:${colX}px;width:${MATCH_W}px;text-align:center">
+      <div style="font-size:${isMobile?'8px':'10px'};font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;line-height:1.3">${label}</div>
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--gold)">${pts}pts</div>
+    </div>`;
+
+    matches.forEach((m,mi)=>{
+      const top=matchTop(ri,mi)+HEADER_H;
+      const winner=picks[m.id];
+      const homeN=m.homeName, awayN=m.awayName;
+      const [_hSlot,_aSlot]=getMatchSlotLabels(m.id);
+      const homeLabel=homeN?(FIFA_ABBR[homeN]||homeN):(_hSlot||'?');
+      const awayLabel=awayN?(FIFA_ABBR[awayN]||awayN):(_aSlot||'?');
+      const flagSize=isMobile?10:12;
+      const homeTBD=!homeN, awayTBD=!awayN;
+      const canPick=homeN&&awayN&&!isExpired();
+      const hPicked=winner===homeN&&homeN;
+      const aPicked=winner===awayN&&awayN;
+
+      html+=`<div style="position:absolute;top:${top}px;left:${colX+4}px;width:${MATCH_W}px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:${canPick?'pointer':'default'}">
+        <div class="bm-team" data-mid="${m.id}" data-team="${homeN||''}" data-can="${canPick?1:0}"
+          style="display:flex;align-items:center;gap:5px;padding:5px 7px;height:${MATCH_H/2}px;border-bottom:1px solid var(--border);
+            ${hPicked?'background:rgba(201,168,76,0.1);':''}${homeTBD?'color:var(--text-dim);font-style:italic;':''}">
+          ${homeN?fi(homeN,flagSize):''}
+          <span style="flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:${isMobile?'9px':'11px'};font-family:${homeN?"'DM Mono',monospace":'inherit'};${hPicked?'color:var(--gold);font-weight:600;':''}">${homeLabel}</span>
+          ${hPicked?'<span style="font-size:9px;color:var(--gold)">&#9733;</span>':''}
+        </div>
+        <div class="bm-team" data-mid="${m.id}" data-team="${awayN||''}" data-can="${canPick?1:0}"
+          style="display:flex;align-items:center;gap:5px;padding:5px 7px;height:${MATCH_H/2}px;
+            ${aPicked?'background:rgba(201,168,76,0.1);':''}${awayTBD?'color:var(--text-dim);font-style:italic;':''}">
+          ${awayN?fi(awayN,flagSize):''}
+          <span style="flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:${isMobile?'9px':'11px'};font-family:${awayN?"'DM Mono',monospace":'inherit'};${aPicked?'color:var(--gold);font-weight:600;':''}">${awayLabel}</span>
+          ${aPicked?'<span style="font-size:9px;color:var(--gold)">&#9733;</span>':''}
+        </div>
+      </div>`;
+    });
+  });
+
+  html+=`</div>`;
+  document.getElementById('bracket-grid').innerHTML=html;
+}
+
+// ─── REVIEW ──────────────────────────────────────────────────
+function goReview(){
+  if(Object.keys(picks).length < 31) return;
+  document.getElementById('review-name').textContent = playerName;
+  document.getElementById('review-email').textContent = playerEmail;
+
+  const rounds = buildRounds();
+  const allRounds = [
+    {key:'ro32',label:'Round of 32',matches:rounds.ro32},
+    {key:'ro16',label:'Round of 16',matches:rounds.ro16},
+    {key:'qf',  label:'Quarterfinals',matches:rounds.qf},
+    {key:'sf',  label:'Semifinals',matches:rounds.sf},
+    {key:'final',label:'Final',matches:rounds.final},
+  ];
+
+  let html = '';
+  allRounds.forEach(({key, label, matches}) => {
+    html += `<div class="review-round"><div class="review-round-label">${label} · ${ROUND_PTS[key]}pts each</div><div class="review-picks">`;
+    matches.forEach(m => {
+      const w = picks[m.id];
+      html += `<div class="review-pick">${w?fi(w,12):''}<span style="color:var(--gold)">${w||'—'}</span></div>`;
+    });
+    html += `</div></div>`;
+  });
+  document.getElementById('review-content').innerHTML = html;
+  goStep('review');
+}
+
+// ─── SUBMIT ──────────────────────────────────────────────────
+async function submitPicks(){
+  const btn = document.getElementById('btn-submit');
+  const errEl = document.getElementById('submit-error');
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  const rounds = buildRounds();
+  const payload = {
+    name: playerName,
+    email: playerEmail,
+    timestamp: new Date().toISOString(),
+    sheet: 'KO Picks',
+  };
+
+  // Flatten all picks
+  const allMatches = [
+    ...rounds.ro32, ...rounds.ro16, ...rounds.qf, ...rounds.sf, ...rounds.final
+  ];
+  allMatches.forEach(m => {
+    payload[m.id] = abbr(picks[m.id] || '');
+  });
+
+  if(!SHEET_URL || SHEET_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'){
+    console.log('DEV MODE — would send:', payload);
+    showSuccess(); return;
+  }
+
+  // Fire and forget — no-cors means we can't read the response anyway
+  try {
+    fetch(SHEET_URL, {
+      method:'POST', mode:'no-cors',
+      body:JSON.stringify(payload),
+    });
+  } catch(e){ /* ignore */ }
+  showSuccess();
+}
+
+function showSuccess(){
+  document.getElementById('success-msg').textContent = `KO picks saved for ${playerName}. Good luck! 🤞`;
+  goStep('success');
+}
+
+// ─── TOAST ───────────────────────────────────────────────────
+function showToast(msg,type){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show '+(type||'');
+  clearTimeout(t._t); t._t = setTimeout(()=>{ t.className='toast '+(type||''); },2800);
+}
+
+// ─── INIT ────────────────────────────────────────────────────
+document.getElementById('inp-name').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('inp-email').focus(); });
+document.getElementById('inp-email').addEventListener('keydown',e=>{ if(e.key==='Enter') submitIdentity(); });
+
+// Delegated click handler for bracket team rows
+document.addEventListener('click', e=>{
+  const row = e.target.closest('.bm-team');
+  if(!row) return;
+  if(row.dataset.can !== '1') return;
+  const mid = row.dataset.mid;
+  const team = row.dataset.team;
+  if(mid && team) pickTeam(mid, team);
+});
+</script>
+</body>
+</html>
