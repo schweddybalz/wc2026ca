@@ -603,14 +603,14 @@ let state={
 };
 
 function loadState(){
-  try{ const r=localStorage.getItem('wc2026-standings-v2'); if(r) state=JSON.parse(r); }catch{}
+  try{ const r=localStorage.getItem('wc2026ca-standings-v1'); if(r) state=JSON.parse(r); }catch{}
   state.results=state.results||{};
   state.players=state.players||{};
   state.settings=state.settings||{groupPicksPublic:false,koPicksPublic:false};
   state.payout=state.payout||{buyIn:100,places:[{label:'1st Place',pct:50},{label:'2nd Place',pct:30},{label:'3rd Place',pct:20},{label:'FORBSIE',pct:0}]};
 }
 function saveState(){
-  try{ localStorage.setItem('wc2026-standings-v2',JSON.stringify(state)); }
+  try{ localStorage.setItem('wc2026ca-standings-v1',JSON.stringify(state)); }
   catch(e){ showToast('Storage error: '+e.message,'error'); }
 }
 
