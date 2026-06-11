@@ -895,6 +895,7 @@ function renderPool(){
       <td class="max-pts" ${maxColor}>${row.max}</td>
     </tr>`;
   });
+  try{renderPayoutInline();}catch(e){}
 }
 
 
@@ -976,6 +977,7 @@ function savePayoutSettings(){
   else state.payout.buyIn=buyIn;
   saveState();
   renderPayoutInline();
+  try{renderPayoutInline();}catch(e){}
 }
 
 function renderPayoutInline(){
