@@ -1025,28 +1025,6 @@ function renderPayout(){
   // Tied places note
   html+=`<div style="font-size:12px;color:var(--text-dim);margin-bottom:1.5rem">Tied places split the combined payout equally. No tiebreakers.</div>`;
 
-  // Current standings with payouts
-  if(players.length){
-    const scores=players.map(name=>({name,...calcPoolScore(name)})).sort((a,b)=>b.total-a.total||b.groupTotal-a.groupTotal);
-    html+=`<div class="section-title" style="font-size:15px">Current Standings & Payouts</div>`;
-    html+=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">`;
-    let rank=1;
-    scores.forEach((row,i)=>{
-      if(i>0&&scores[i].total<scores[i-1].total) rank=i+1;
-      // Find if this rank gets a prize
-      const placeIdx=rank-1;
-      const prize=placeIdx<places.length?Math.round(pot*(parseFloat(places[placeIdx].pct)||0)/100):null;
-      const medal=['🥇','🥈','🥉'][rank-1]||rank;
-      html+=`<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid rgba(201,168,76,0.06)">
-        <span style="min-width:28px;text-align:center;font-size:${rank<=3?'16':'13'}px;${rank>3?'color:var(--text-dim);font-family:monospace':''}">${medal}</span>
-        <span style="flex:1;font-weight:${rank<=3?'500':'400'};font-size:13px">${row.name}</span>
-        <span style="font-family:monospace;font-size:13px;color:var(--gold)">${row.total} pts</span>
-        ${prize!==null?`<span style="font-family:monospace;font-size:14px;color:var(--green);font-weight:600;min-width:50px;text-align:right">$${prize}</span>`:'<span style="min-width:50px"></span>'}
-      </div>`;
-    });
-    html+=`</div>`;
-  }
-
   el.innerHTML=html;
 }
 // ─── PAYOUT INLINE (called after renderPool) ─────────────────
