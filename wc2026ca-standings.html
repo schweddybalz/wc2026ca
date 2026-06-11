@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/flags/4x3/us.svg">
+<link id="favicon" rel="icon" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/flags/4x3/us.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>World Cup 2026 Pool — USA Edition</title>
+<title id="page-title">World Cup 2026 Pool — USA Edition</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <style>
@@ -215,9 +215,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <header class="header">
   <div style="display:flex;align-items:center;gap:10px">
-    <img src="https://flagcdn.com/w40/us.png" height="18" class="fi" alt="">
-    <div class="logo">WC2026 Pool <span>USA Edition</span></div>
-    <img src="https://flagcdn.com/w40/us.png" height="18" class="fi" alt="">
+    <img id="flag-left" src="https://flagcdn.com/w40/us.png" height="18" class="fi" alt="">
+    <div class="logo">WC2026 Pool <span id="edition-title">USA Edition</span></div>
+    <img id="flag-right" src="https://flagcdn.com/w40/us.png" height="18" class="fi" alt="">
   </div>
   <nav class="nav">
     <button class="nav-btn active" onclick="showPage('pool')">Pool Standings</button>
@@ -2553,10 +2553,19 @@ function init(){
   loadState();
 
   // Apply edition config to UI
-  document.querySelectorAll('[id^="flag-img"]').forEach(img=>img.src=CFG.flagImg);
+  const flagUrl = EDITION==='CA'
+    ? 'https://flagcdn.com/w40/ca.png'
+    : 'https://flagcdn.com/w40/us.png';
+  const fl=document.getElementById('flag-left');  if(fl) fl.src=flagUrl;
+  const fr=document.getElementById('flag-right'); if(fr) fr.src=flagUrl;
   const et=document.getElementById('edition-title');
   if(et) et.textContent=CFG.title;
-  document.title='WC2026 Pool — '+CFG.title;
+  const pt=document.getElementById('page-title');
+  if(pt) pt.textContent='WC2026 Pool — '+CFG.title;
+  const fv=document.getElementById('favicon');
+  if(fv) fv.href=EDITION==='CA'
+    ?'https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/flags/4x3/ca.svg'
+    :'https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/flags/4x3/us.svg';
 
   autoLoadFromSheet(); // populates state.players from hardcoded data
   // Verify players loaded, fallback log
