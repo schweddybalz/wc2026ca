@@ -1466,20 +1466,23 @@ function renderGroupStats(el,players){
       return{team,c1,c2,c3,total:c1+c2+c3};
     });
     counts.sort((a,b)=>b.total-a.total||b.c1-a.c1||b.c2-a.c2);
-    const maxTotal=counts[0]?.total||1;
+    const maxTotal=n||1; // bars show % of total players
     html+=`<div class="stat-group"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:8px;"><span style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:var(--gold)">Group ${letter}</span><span style="font-size:11px;color:var(--text-muted);margin-left:auto">${n} player${n!==1?'s':''}</span></div>`;
     counts.forEach(({team,c1,c2,c3,total})=>{
-      const barW=Math.round(total/maxTotal*100);
-      const p1=n?Math.round(c1/n*100):0,p2=n?Math.round(c2/n*100):0,p3=n?Math.round(c3/n*100):0;
+      // Each segment as % of n so bar always fills full width
+      const p1=Math.round(c1/n*100);
+      const p2=Math.round(c2/n*100);
+      const p3=Math.round(c3/n*100);
+      const pct=Math.round(total/n*100);
       html+=`<div class="stat-team-row">
         ${fi(team)}<span style="flex:0 0 130px;font-size:12px">${team}</span>
         <div style="flex:1">
           <div style="display:flex;align-items:center;gap:6px">
-            <div class="stat-bar-wrap"><div class="stat-bar" style="width:${barW}%;background:linear-gradient(90deg,var(--gold) ${p1}%,var(--green) ${p1}% ${p1+p2}%,var(--blue) ${p1+p2}% ${p1+p2+p3}%,var(--surface2) ${p1+p2+p3}%)"></div></div>
+            <div class="stat-bar-wrap"><div class="stat-bar" style="width:100%;background:linear-gradient(90deg,var(--gold) ${p1}%,var(--green) ${p1}% ${p1+p2}%,var(--blue) ${p1+p2}% ${p1+p2+p3}%,var(--surface2) ${p1+p2+p3}%)"></div></div>
             <span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--text-muted);min-width:90px;text-align:right">
               ${c1?`<span style="color:var(--gold)">${c1}</span>·`:'0·'}${c2?`<span style="color:var(--green)">${c2}</span>·`:'0·'}${c3?`<span style="color:var(--blue)">${c3}</span>`:'0'}
             </span>
-            <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-muted);min-width:30px;text-align:right">${total?Math.round(total/n*100)+'%':''}</span>
+            <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-muted);min-width:30px;text-align:right">${total?pct+'%':''}</span>
           </div>
         </div>
       </div>`;
