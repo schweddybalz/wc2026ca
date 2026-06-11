@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/flags/4x3/ca.svg">
+<link rel="icon" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/flags/4x3/us.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>World Cup 2026 Pool — Canada Edition</title>
+<title>World Cup 2026 Pool — USA Edition</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <style>
@@ -215,9 +215,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <header class="header">
   <div style="display:flex;align-items:center;gap:10px">
-    <img src="https://flagcdn.com/w40/ca.png" height="18" class="fi" alt="">
-    <div class="logo">WC2026 Pool <span>Canada Edition</span></div>
-    <img src="https://flagcdn.com/w40/ca.png" height="18" class="fi" alt="">
+    <img src="https://flagcdn.com/w40/us.png" height="18" class="fi" alt="">
+    <div class="logo">WC2026 Pool <span>USA Edition</span></div>
+    <img src="https://flagcdn.com/w40/us.png" height="18" class="fi" alt="">
   </div>
   <nav class="nav">
     <button class="nav-btn active" onclick="showPage('pool')">Pool Standings</button>
@@ -412,6 +412,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 
 
+
 <!-- SIMULATE PAGE -->
 <div class="page" id="page-sim">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
@@ -435,6 +436,34 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 </main>
 
 <script>
+// ─── EDITION CONFIG ───────────────────────────────────────────
+const EDITION = 'CA'; // Change to 'CA' for Canada edition
+
+const EDITION_CONFIG = {
+  USA: {
+    title: 'USA Edition',
+    flag: '🇺🇸',
+    flagImg: 'us.png',
+    storageKey: null, // no localStorage
+    sheetUrl: 'https://script.google.com/macros/s/AKfycby8eDlogjUJI9ghzvOCSGZSXpnwK6v_VuNE5pZo8pzbZDbI9H-Qig8tLlCedxW2oD7utw/exec',
+    buyIn: 50,
+    payoutPlaces: [{label:'1st Place',pct:50},{label:'2nd Place',pct:30},{label:'3rd Place',pct:20}],
+    picks: {"groupPicks":[{"Timestamp":"2026-06-02T15:06:57.092Z","Name":"Steven Paul","Email":"scpaul@gmail.com","1A":"MEX","2A":"KOR","3A":"CZE","1B":"SUI","2B":"CAN","3B":"BIH","1C":"BRA","2C":"MAR","3C":"SCO","1D":"USA","2D":"TUR","3D":"PAR","1E":"GER","2E":"ECU","3E":"CIV","1F":"NED","2F":"JPN","3F":"SWE","1G":"BEL","2G":"EGY","3G":"","1H":"ESP","2H":"URU","3H":"","1I":"FRA","2I":"NOR","3I":"SEN","1J":"ARG","2J":"AUT","3J":"ALG","1K":"POR","2K":"COL","3K":"","1L":"ENG","2L":"CRO","3L":""},{"Timestamp":"2026-06-03T02:34:34.016Z","Name":"Joshua Colvin","Email":"joshuamcolvin92@gmail.com","1A":"KOR","2A":"MEX","3A":"","1B":"SUI","2B":"CAN","3B":"","1C":"BRA","2C":"MAR","3C":"","1D":"AUS","2D":"USA","3D":"PAR","1E":"GER","2E":"ECU","3E":"CIV","1F":"NED","2F":"JPN","3F":"TUN","1G":"BEL","2G":"EGY","3G":"IRN","1H":"ESP","2H":"URU","3H":"KSA","1I":"FRA","2I":"SEN","3I":"NOR","1J":"ARG","2J":"AUT","3J":"ALG","1K":"POR","2K":"COL","3K":"","1L":"ENG","2L":"CRO","3L":"PAN"},{"Timestamp":"2026-06-03T23:37:49.314Z","Name":"Kevin Pichelman","Email":"kevin@pichelman.com","1A":"MEX","2A":"RSA","3A":"CZE","1B":"CAN","2B":"SUI","3B":"QAT","1C":"BRA","2C":"SCO","3C":"MAR","1D":"USA","2D":"AUS","3D":"TUR","1E":"GER","2E":"ECU","3E":"","1F":"SWE","2F":"NED","3F":"JPN","1G":"BEL","2G":"NZL","3G":"EGY","1H":"ESP","2H":"URU","3H":"KSA","1I":"FRA","2I":"NOR","3I":"","1J":"ARG","2J":"AUT","3J":"","1K":"POR","2K":"COL","3K":"","1L":"ENG","2L":"CRO","3L":"PAN"},{"Timestamp":"2026-06-08T22:43:31.060Z","Name":"Sean Paul","Email":"sgpaul@gmail.com","1A":"KOR","2A":"CZE","3A":"MEX","1B":"CAN","2B":"SUI","3B":"BIH","1C":"BRA","2C":"MAR","3C":"SCO","1D":"TUR","2D":"USA","3D":"PAR","1E":"GER","2E":"CIV","3E":"ECU","1F":"JPN","2F":"SWE","3F":"","1G":"BEL","2G":"EGY","3G":"","1H":"ESP","2H":"KSA","3H":"URU","1I":"NOR","2I":"FRA","3I":"SEN","1J":"ARG","2J":"AUT","3J":"","1K":"POR","2K":"COL","3K":"","1L":"CRO","2L":"PAN","3L":"ENG"},{"Timestamp":"2026-06-09T16:58:53.275Z","Name":"Tudd Barron","Email":"tbarron14@gmail.com","1A":"MEX","2A":"KOR","3A":"RSA","1B":"SUI","2B":"CAN","3B":"","1C":"BRA","2C":"MAR","3C":"SCO","1D":"USA","2D":"TUR","3D":"AUS","1E":"GER","2E":"ECU","3E":"CIV","1F":"NED","2F":"JPN","3F":"","1G":"BEL","2G":"EGY","3G":"","1H":"ESP","2H":"URU","3H":"KSA","1I":"FRA","2I":"SEN","3I":"NOR","1J":"ARG","2J":"AUT","3J":"ALG","1K":"POR","2K":"COL","3K":"","1L":"ENG","2L":"CRO","3L":"GHA"},{"Timestamp":"2026-06-09T21:49:40.700Z","Name":"Sanel Subasic","Email":"sanelsubasic@gmail.com","1A":"MEX","2A":"KOR","3A":"RSA","1B":"SUI","2B":"BIH","3B":"CAN","1C":"BRA","2C":"MAR","3C":"SCO","1D":"AUS","2D":"USA","3D":"TUR","1E":"GER","2E":"ECU","3E":"CIV","1F":"NED","2F":"SWE","3F":"JPN","1G":"BEL","2G":"EGY","3G":"NZL","1H":"ESP","2H":"URU","3H":"","1I":"FRA","2I":"NOR","3I":"","1J":"ARG","2J":"AUT","3J":"","1K":"POR","2K":"COL","3K":"","1L":"ENG","2L":"CRO","3L":"GHA"},{"Timestamp":"2026-06-10T02:29:13.557Z","Name":"Colin Forbes","Email":"forbsie99@gmail.com","1A":"MEX","2A":"KOR","3A":"CZE","1B":"SUI","2B":"CAN","3B":"","1C":"BRA","2C":"MAR","3C":"SCO","1D":"USA","2D":"TUR","3D":"AUS","1E":"GER","2E":"ECU","3E":"CIV","1F":"NED","2F":"JPN","3F":"SWE","1G":"BEL","2G":"IRN","3G":"EGY","1H":"ESP","2H":"URU","3H":"","1I":"FRA","2I":"NOR","3I":"SEN","1J":"ARG","2J":"AUT","3J":"","1K":"POR","2K":"COL","3K":"","1L":"ENG","2L":"CRO","3L":"PAN"},{"Timestamp":"2026-06-10T14:13:45.937Z","Name":"Ian Sears","Email":"ian.t.sears@gmail.com","1A":"MEX","2A":"CZE","3A":"","1B":"SUI","2B":"CAN","3B":"BIH","1C":"BRA","2C":"MAR","3C":"SCO","1D":"TUR","2D":"USA","3D":"PAR","1E":"GER","2E":"ECU","3E":"CIV","1F":"NED","2F":"SWE","3F":"JPN","1G":"BEL","2G":"EGY","3G":"","1H":"ESP","2H":"URU","3H":"CPV","1I":"FRA","2I":"NOR","3I":"SEN","1J":"ARG","2J":"AUT","3J":"","1K":"POR","2K":"COL","3K":"COD","1L":"ENG","2L":"CRO","3L":""},{"Timestamp":"2026-06-10T17:17:19.334Z","Name":"Nick Underwood","Email":"theastronick@gmail.com","1A":"MEX","2A":"KOR","3A":"","1B":"SUI","2B":"CAN","3B":"QAT","1C":"BRA","2C":"MAR","3C":"","1D":"USA","2D":"TUR","3D":"AUS","1E":"GER","2E":"ECU","3E":"CIV","1F":"NED","2F":"JPN","3F":"","1G":"BEL","2G":"IRN","3G":"EGY","1H":"ESP","2H":"URU","3H":"","1I":"FRA","2I":"NOR","3I":"SEN","1J":"ARG","2J":"AUT","3J":"ALG","1K":"POR","2K":"COL","3K":"UZB","1L":"ENG","2L":"CRO","3L":"PAN"},{"Timestamp":"2026-06-10T17:36:28.328Z","Name":"Mike LaRue","Email":"gm.larue@gmail.com","1A":"MEX","2A":"KOR","3A":"CZE","1B":"SUI","2B":"CAN","3B":"BIH","1C":"BRA","2C":"MAR","3C":"SCO","1D":"USA","2D":"TUR","3D":"PAR","1E":"GER","2E":"ECU","3E":"CIV","1F":"NED","2F":"JPN","3F":"SWE","1G":"BEL","2G":"EGY","3G":"IRN","1H":"ESP","2H":"URU","3H":"","1I":"FRA","2I":"NOR","3I":"SEN","1J":"ARG","2J":"AUT","3J":"","1K":"POR","2K":"COL","3K":"","1L":"ENG","2L":"CRO","3L":""},{"Timestamp":"2026-06-10T23:23:54.388Z","Name":"Tom Brannigan","Email":"branniganth@gmail.com","1A":"MEX","2A":"KOR","3A":"CZE","1B":"SUI","2B":"CAN","3B":"","1C":"BRA","2C":"MAR","3C":"SCO","1D":"USA","2D":"TUR","3D":"","1E":"GER","2E":"ECU","3E":"CIV","1F":"NED","2F":"JPN","3F":"SWE","1G":"BEL","2G":"EGY","3G":"IRN","1H":"ESP","2H":"URU","3H":"KSA","1I":"NOR","2I":"FRA","3I":"SEN","1J":"ARG","2J":"AUT","3J":"ALG","1K":"POR","2K":"COL","3K":"","1L":"ENG","2L":"CRO","3L":""},{"Timestamp":"2026-06-11T01:00:11.729Z","Name":"Nathan Dufresne","Email":"nathandufresne@me.com","1A":"MEX","2A":"KOR","3A":"","1B":"SUI","2B":"CAN","3B":"","1C":"BRA","2C":"MAR","3C":"","1D":"USA","2D":"TUR","3D":"PAR","1E":"GER","2E":"CIV","3E":"ECU","1F":"NED","2F":"JPN","3F":"SWE","1G":"BEL","2G":"EGY","3G":"IRN","1H":"ESP","2H":"URU","3H":"KSA","1I":"FRA","2I":"SEN","3I":"NOR","1J":"ARG","2J":"AUT","3J":"","1K":"POR","2K":"COL","3K":"COD","1L":"ENG","2L":"CRO","3L":"GHA"},{"Timestamp":"2026-06-11T02:16:16.094Z","Name":"Sean Enman","Email":"iisenman@gmail.com","1A":"MEX","2A":"CZE","3A":"KOR","1B":"SUI","2B":"CAN","3B":"","1C":"BRA","2C":"MAR","3C":"SCO","1D":"TUR","2D":"USA","3D":"AUS","1E":"GER","2E":"ECU","3E":"CIV","1F":"NED","2F":"JPN","3F":"SWE","1G":"BEL","2G":"IRN","3G":"EGY","1H":"ESP","2H":"URU","3H":"","1I":"FRA","2I":"SEN","3I":"NOR","1J":"ARG","2J":"AUT","3J":"ALG","1K":"POR","2K":"COL","3K":"","1L":"ENG","2L":"CRO","3L":""},{"Timestamp":"2026-06-11T03:48:17.955Z","Name":"Dave Williams","Email":"williamsda@gmail.com","1A":"MEX","2A":"KOR","3A":"CZE","1B":"CAN","2B":"SUI","3B":"BIH","1C":"BRA","2C":"MAR","3C":"SCO","1D":"USA","2D":"TUR","3D":"PAR","1E":"GER","2E":"CIV","3E":"ECU","1F":"NED","2F":"JPN","3F":"SWE","1G":"BEL","2G":"EGY","3G":"","1H":"ESP","2H":"URU","3H":"","1I":"FRA","2I":"NOR","3I":"SEN","1J":"ARG","2J":"AUT","3J":"ALG","1K":"POR","2K":"COL","3K":"","1L":"ENG","2L":"CRO","3L":""},{"Timestamp":"2026-06-11T04:24:53.168Z","Name":"Jeremiah Cross","Email":"jeremiah.cross@gmail.com","1A":"MEX","2A":"KOR","3A":"CZE","1B":"SUI","2B":"CAN","3B":"","1C":"BRA","2C":"MAR","3C":"SCO","1D":"USA","2D":"TUR","3D":"PAR","1E":"GER","2E":"ECU","3E":"CIV","1F":"NED","2F":"JPN","3F":"SWE","1G":"BEL","2G":"IRN","3G":"","1H":"ESP","2H":"URU","3H":"","1I":"FRA","2I":"NOR","3I":"SEN","1J":"ARG","2J":"AUT","3J":"","1K":"COL","2K":"POR","3K":"UZB","1L":"ENG","2L":"CRO","3L":"PAN"}],"koPicks":[]},
+  },
+  CA: {
+    title: 'Canada Edition',
+    flag: '🇨🇦',
+    flagImg: 'ca.png',
+    storageKey: null, // no localStorage
+    sheetUrl: 'https://script.google.com/macros/s/AKfycbzpH1CVAHzbfNE8PPOm-YpPwywQaxiU4dQl-_bFCQ-M7T55gE07YavJ72wUZFhi5t-Z/exec',
+    buyIn: 100,
+    payoutPlaces: [{label:'1st Place',pct:70},{label:'2nd Place',pct:30}],
+    picks: {"groupPicks":[{"Timestamp":"2026-06-02T15:42:33.267Z","Name":"Steven Paul","Email":"scpaul@gmail.com","1A":"MEX","2A":"KOR","3A":"CZE","1B":"SUI","2B":"CAN","3B":"BIH","1C":"BRA","2C":"MAR","3C":"SCO","1D":"USA","2D":"TUR","3D":"PAR","1E":"GER","2E":"ECU","3E":"CIV","1F":"NED","2F":"JPN","3F":"SWE","1G":"BEL","2G":"EGY","3G":"","1H":"ESP","2H":"URU","3H":"","1I":"FRA","2I":"NOR","3I":"SEN","1J":"ARG","2J":"AUT","3J":"ALG","1K":"POR","2K":"COL","3K":"","1L":"ENG","2L":"CRO","3L":""},{"Timestamp":"2026-06-08T19:24:44.927Z","Name":"Jeffery innis","Email":"jefferyinnis@gmail.com","1A":"MEX","2A":"CZE","3A":"KOR","1B":"SUI","2B":"CAN","3B":"","1C":"BRA","2C":"MAR","3C":"SCO","1D":"PAR","2D":"USA","3D":"TUR","1E":"GER","2E":"ECU","3E":"CIV","1F":"NED","2F":"SWE","3F":"JPN","1G":"BEL","2G":"IRN","3G":"EGY","1H":"ESP","2H":"URU","3H":"KSA","1I":"FRA","2I":"NOR","3I":"","1J":"ARG","2J":"AUT","3J":"","1K":"POR","2K":"COL","3K":"","1L":"ENG","2L":"CRO","3L":"PAN"},{"Timestamp":"2026-06-10T02:21:55.904Z","Name":"Fourth Place 4bsie","Email":"forbsie99@gmail.com","1A":"MEX","2A":"KOR","3A":"","1B":"SUI","2B":"CAN","3B":"","1C":"BRA","2C":"MAR","3C":"SCO","1D":"TUR","2D":"USA","3D":"AUS","1E":"GER","2E":"ECU","3E":"CIV","1F":"NED","2F":"JPN","3F":"SWE","1G":"BEL","2G":"IRN","3G":"EGY","1H":"ESP","2H":"URU","3H":"","1I":"FRA","2I":"SEN","3I":"NOR","1J":"ARG","2J":"AUT","3J":"ALG","1K":"POR","2K":"COL","3K":"","1L":"ENG","2L":"CRO","3L":"PAN"},{"Timestamp":"2026-06-11T16:53:16.834Z","Name":"chris girouard","Email":"chris_girouard@hotmail.com","1A":"MEX","2A":"KOR","3A":"CZE","1B":"CAN","2B":"SUI","3B":"","1C":"BRA","2C":"MAR","3C":"SCO","1D":"USA","2D":"TUR","3D":"PAR","1E":"GER","2E":"ECU","3E":"CIV","1F":"NED","2F":"JPN","3F":"SWE","1G":"BEL","2G":"EGY","3G":"","1H":"ESP","2H":"URU","3H":"","1I":"FRA","2I":"SEN","3I":"NOR","1J":"ARG","2J":"ALG","3J":"AUT","1K":"POR","2K":"COL","3K":"","1L":"ENG","2L":"CRO","3L":"GHA"},{"Timestamp":"2026-06-11T17:22:42.403Z","Name":"Chilly Willy","Email":"chillywilly75tacw@yahoo.com","1A":"MEX","2A":"KOR","3A":"CZE","1B":"SUI","2B":"CAN","3B":"BIH","1C":"BRA","2C":"MAR","3C":"SCO","1D":"USA","2D":"PAR","3D":"AUS","1E":"GER","2E":"CIV","3E":"ECU","1F":"NED","2F":"JPN","3F":"SWE","1G":"BEL","2G":"EGY","3G":"IRN","1H":"ESP","2H":"URU","3H":"KSA","1I":"FRA","2I":"SEN","3I":"","1J":"ARG","2J":"AUT","3J":"","1K":"POR","2K":"COL","3K":"","1L":"ENG","2L":"PAN","3L":""}],"koPicks":[]},
+  },
+};
+const CFG = EDITION_CONFIG[EDITION];
+
+
 // ─── FIFA RANKINGS (April 1 2026 official) ───────────────────
 const FIFA_RANK = {
   'France':1,'Spain':2,'Argentina':3,'England':4,'Portugal':5,
@@ -598,20 +627,21 @@ let state={
   resolvedTeams:{},
   sheetUrl:'',
   settings:{groupPicksPublic:false,koPicksPublic:false},
-  payout:{buyIn:100,places:[{label:'1st Place',pct:50},{label:'2nd Place',pct:30},{label:'3rd Place',pct:20},{label:'FORBSIE',pct:0}]},
+  payout:{buyIn:50,places:[{label:'1st Place',pct:50},{label:'2nd Place',pct:30},{label:'3rd Place',pct:20}]},
 };
 
 function loadState(){
-  try{ const r=localStorage.getItem('wc2026ca-standings-v1'); if(r) state=JSON.parse(r); }catch{}
+  // No localStorage - all state is in-memory only
   state.results=state.results||{};
-  state.players=state.players||{};
+  state.players={};
+  state.koPicks=state.koPicks||{};
+  state.koResults=state.koResults||{};
+  state.resolvedTeams=state.resolvedTeams||{};
+  state.groupResults=state.groupResults||{};
   state.settings=state.settings||{groupPicksPublic:false,koPicksPublic:false};
-  state.payout=state.payout||{buyIn:100,places:[{label:'1st Place',pct:50},{label:'2nd Place',pct:30},{label:'3rd Place',pct:20},{label:'FORBSIE',pct:0}]};
+  state.payout={buyIn:CFG.buyIn, places:CFG.payoutPlaces};
 }
-function saveState(){
-  try{ localStorage.setItem('wc2026ca-standings-v1',JSON.stringify(state)); }
-  catch(e){ showToast('Storage error: '+e.message,'error'); }
-}
+function saveState(){ /* no-op — no localStorage */ }
 
 // ─── GROUP TABLE CALCULATION ─────────────────────────────────
 function calcGroupTable(letter){
@@ -821,33 +851,58 @@ function calcPoolScore(playerName){
   const player=state.players[playerName];
   if(!player||!player.groupPicks) return {advance:0,position:0,groupTotal:0,ro32:0,ro16:0,qf:0,sf:0,final:0,koTotal:0,total:0};
   let advance=0, position=0;
-  const thirds=getAllThirds();
-  const advancingThirds=thirds.slice(0,8).map(t=>t.name);
+
+  // Determine advancing thirds — from sheet groupResults if available, else from match results
+  const sheetGroupResults = state.groupResults||{};
+  const hasSheetResults = Object.keys(sheetGroupResults).some(g=>sheetGroupResults[g].first);
+
+  let advancingThirds=[];
+  if(hasSheetResults){
+    // Use sheet results for thirds ranking
+    const thirds=GKEYS
+      .filter(g=>sheetGroupResults[g]?.third)
+      .map(g=>({name:fromAbbr(sheetGroupResults[g].third),group:g}));
+    advancingThirds=thirds.map(t=>t.name);
+  } else {
+    const thirds=getAllThirds();
+    advancingThirds=thirds.slice(0,8).map(t=>t.name);
+  }
 
   GKEYS.forEach(letter=>{
-    const table=calcGroupTable(letter);
     const picks=player.groupPicks[letter]||{};
+    const gr=sheetGroupResults[letter];
 
-    // Only score if at least one match in this group has been played
-    const matchesPlayed=MATCHES.filter(m=>m.g===letter).some(m=>{
-      const r=state.results[m.id];
-      return r&&r.hg!==''&&r.hg!==undefined&&r.ag!==''&&r.ag!==undefined&&!isNaN(parseInt(r.hg))&&!isNaN(parseInt(r.ag));
-    });
-    if(!matchesPlayed) return;
-
-    [1,2,3].forEach(rank=>{
-      const pickedTeam=picks[rank];
-      if(!pickedTeam) return;
-      const advanced1=table[0]?.name===pickedTeam;
-      const advanced2=table[1]?.name===pickedTeam;
-      const advanced3=advancingThirds.includes(pickedTeam)&&table[2]?.name===pickedTeam;
-      // For 1st/2nd: score once group is complete (position is settled)
-      // For partial results: award 1st/2nd advance points as they come in
-      if(advanced1||advanced2||advanced3){
-        advance++;
-        if(table.findIndex(t=>t.name===pickedTeam)+1===rank) position++;
-      }
-    });
+    if(hasSheetResults&&gr&&gr.first){
+      // Use sheet group results directly
+      const first=fromAbbr(gr.first), second=fromAbbr(gr.second), third=fromAbbr(gr.third);
+      [1,2,3].forEach(rank=>{
+        const pickedTeam=picks[rank]; if(!pickedTeam) return;
+        const advanced=pickedTeam===first||pickedTeam===second||(third&&advancingThirds.includes(pickedTeam)&&pickedTeam===third);
+        if(advanced){
+          advance++;
+          const actualPos=pickedTeam===first?1:pickedTeam===second?2:3;
+          if(actualPos===rank) position++;
+        }
+      });
+    } else {
+      // Fall back to match-level results
+      const table=calcGroupTable(letter);
+      const matchesPlayed=MATCHES.filter(m=>m.g===letter).some(m=>{
+        const r=state.results[m.id];
+        return r&&r.hg!==''&&r.hg!==undefined&&r.ag!==''&&r.ag!==undefined&&!isNaN(parseInt(r.hg))&&!isNaN(parseInt(r.ag));
+      });
+      if(!matchesPlayed) return;
+      [1,2,3].forEach(rank=>{
+        const pickedTeam=picks[rank]; if(!pickedTeam) return;
+        const advanced1=table[0]?.name===pickedTeam;
+        const advanced2=table[1]?.name===pickedTeam;
+        const advanced3=advancingThirds.includes(pickedTeam)&&table[2]?.name===pickedTeam;
+        if(advanced1||advanced2||advanced3){
+          advance++;
+          if(table.findIndex(t=>t.name===pickedTeam)+1===rank) position++;
+        }
+      });
+    }
   });
 
   const ro32s=calcRoundKOScore(playerName,'ro32');
@@ -898,88 +953,7 @@ function renderPool(){
   try{renderPayoutInline();}catch(e){}
 }
 
-
-// ─── PAYOUT FUNCTIONS ───────────────────────────────────────
-
-// ─── PAYOUT ───────────────────────────────────────────────────
-function renderPayoutAdmin(){
-  const p=state.payout||{buyIn:50,places:[]};
-  const buyInEl=document.getElementById('payout-buyin');
-  const countEl=document.getElementById('payout-places-count');
-  if(buyInEl) buyInEl.value=p.buyIn||50;
-  if(countEl) countEl.value=p.places?.length||3;
-  renderPayoutPlacesEditor();
-}
-
-function renderPayoutPlacesEditor(){
-  const el=document.getElementById('payout-places-editor');
-  if(!el) return;
-  const places=state.payout?.places||[];
-  let html='<div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin-bottom:4px">'
-    +'<span style="font-size:10px;color:var(--text-dim);font-family:monospace;text-transform:uppercase">Label</span>'
-    +'<span style="font-size:10px;color:var(--text-dim);font-family:monospace;text-transform:uppercase">% of pot</span>'
-    +'<span></span></div>';
-  places.forEach((place,i)=>{
-    html+=`<div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin-bottom:6px">
-      <input class="form-input" style="font-size:12px;padding:5px 8px" value="${place.label||''}" placeholder="e.g. 1st Place" onchange="updatePayoutPlace(${i},'label',this.value)">
-      <input class="form-input" style="font-size:12px;padding:5px 8px" value="${place.pct||''}" placeholder="%" type="number" min="0" max="100" onchange="updatePayoutPlace(${i},'pct',parseFloat(this.value)||0)">
-      <button class="btn btn-danger btn-sm" onclick="removePayoutPlace(${i})">✕</button>
-    </div>`;
-  });
-  html+=`<button class="btn btn-ghost btn-sm" onclick="addPayoutPlace()" style="margin-top:4px">+ Add Place</button>`;
-  el.innerHTML=html;
-  // Show total %
-  const total=places.reduce((s,p)=>s+(parseFloat(p.pct)||0),0);
-  const totalEl=document.getElementById('payout-pct-total');
-  if(totalEl) totalEl.innerHTML=`Total: <span style="color:${Math.abs(total-100)<0.01?'var(--green)':'#e74c3c'};font-weight:500">${total}%</span>${Math.abs(total-100)>0.01?' (should be 100%)':''}`;
-}
-
-function updatePayoutPlace(i,field,val){
-  if(!state.payout?.places) return;
-  state.payout.places[i][field]=val;
-  saveState();
-  renderPayoutPlacesEditor();
-  renderPayoutInline();
-}
-
-function addPayoutPlace(){
-  if(!state.payout) state.payout={buyIn:50,places:[]};
-  state.payout.places.push({label:`Place ${state.payout.places.length+1}`,pct:0});
-  saveState();
-  renderPayoutPlacesEditor();
-  document.getElementById('payout-places-count').value=state.payout.places.length;
-}
-
-function removePayoutPlace(i){
-  state.payout.places.splice(i,1);
-  saveState();
-  renderPayoutPlacesEditor();
-  document.getElementById('payout-places-count').value=state.payout.places.length;
-  renderPayoutInline();
-}
-
-function updatePayoutPlaces(){
-  const count=parseInt(document.getElementById('payout-places-count').value)||3;
-  const places=state.payout?.places||[];
-  const defaultLabels=['1st Place','2nd Place','3rd Place','4th Place','5th Place'];
-  while(places.length<count) places.push({label:defaultLabels[places.length]||`Place ${places.length+1}`,pct:0});
-  while(places.length>count) places.pop();
-  if(!state.payout) state.payout={buyIn:50,places};
-  else state.payout.places=places;
-  saveState();
-  renderPayoutPlacesEditor();
-  renderPayoutInline();
-}
-
-function savePayoutSettings(){
-  const buyIn=parseFloat(document.getElementById('payout-buyin').value)||50;
-  if(!state.payout) state.payout={buyIn,places:[]};
-  else state.payout.buyIn=buyIn;
-  saveState();
-  renderPayoutInline();
-  try{renderPayoutInline();}catch(e){}
-}
-
+// ─── PAYOUT INLINE (called after renderPool) ─────────────────
 function renderPayoutInline(){
   const el=document.getElementById('payout-content');
   if(!el) return;
@@ -1343,7 +1317,7 @@ function setResult(matchId, field, value){
   if(!state.results[matchId]) state.results[matchId]={hg:'',ag:'',hfp:0,afp:0};
   state.results[matchId][field]=value;
   saveState();
-  // Live update group tables and pool
+  pushMatchScore(matchId);
   if(document.getElementById('page-groups').classList.contains('active')) renderGroups();
   if(document.getElementById('page-pool').classList.contains('active')) renderPool();
 }
@@ -1746,6 +1720,7 @@ function resetGroupResults(){
   if(!confirm('Reset all group match results? This cannot be undone.')) return;
   state.results={};
   saveState();
+  pushMatchScores();
   renderAdmin();
   renderGroups();
   renderPool();
@@ -1767,6 +1742,7 @@ function resetBracket(){
   state.resolvedTeams={};
   state.koResults={};
   saveState();
+  pushBracketSlots();
   renderAdmin();
   renderBracket();
   showToast('Bracket reset','success');
@@ -1785,6 +1761,7 @@ function exportBracket(){
 function setSlot(slot,team){
   state.resolvedTeams[slot]=team;
   saveState();
+  pushBracketSlot(slot,team);
   renderBracket();
   renderKoResultEntries();
 }
@@ -2182,6 +2159,23 @@ function renderBracket(){
 
 
 
+// ─── PUSH TO SHEET ────────────────────────────────────────────
+function pushToSheet(payload){
+  const url = AUTO_SHEET_URL || state.sheetUrl;
+  if(!url) return;
+  fetch(url, {method:'POST', mode:'no-cors', body:JSON.stringify(payload)});
+}
+
+function pushMatchScore(matchId){
+  const r=state.results[matchId];
+  if(!r) return;
+  pushToSheet({sheet:'Match Score', matchId, hg:r.hg||'', ag:r.ag||'', hfp:r.hfp||0, afp:r.afp||0});
+}
+
+function pushBracketSlot(slot, team){
+  pushToSheet({sheet:'Bracket Slot', slot, team:team||''});
+}
+
 // ─── SIMULATE ─────────────────────────────────────────────────
 let simPicks={};
 
@@ -2402,10 +2396,171 @@ document.addEventListener('click',e=>{
   renderSim();
 });
 
+
+// ─── PAYOUT ───────────────────────────────────────────────────
+function renderPayoutAdmin(){
+  const p=state.payout||{buyIn:50,places:[]};
+  const buyInEl=document.getElementById('payout-buyin');
+  const countEl=document.getElementById('payout-places-count');
+  if(buyInEl) buyInEl.value=p.buyIn||50;
+  if(countEl) countEl.value=p.places?.length||3;
+  renderPayoutPlacesEditor();
+}
+
+function renderPayoutPlacesEditor(){
+  const el=document.getElementById('payout-places-editor');
+  if(!el) return;
+  const places=state.payout?.places||[];
+  let html='<div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin-bottom:4px">'
+    +'<span style="font-size:10px;color:var(--text-dim);font-family:monospace;text-transform:uppercase">Label</span>'
+    +'<span style="font-size:10px;color:var(--text-dim);font-family:monospace;text-transform:uppercase">% of pot</span>'
+    +'<span></span></div>';
+  places.forEach((place,i)=>{
+    html+=`<div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin-bottom:6px">
+      <input class="form-input" style="font-size:12px;padding:5px 8px" value="${place.label||''}" placeholder="e.g. 1st Place" onchange="updatePayoutPlace(${i},'label',this.value)">
+      <input class="form-input" style="font-size:12px;padding:5px 8px" value="${place.pct||''}" placeholder="%" type="number" min="0" max="100" onchange="updatePayoutPlace(${i},'pct',parseFloat(this.value)||0)">
+      <button class="btn btn-danger btn-sm" onclick="removePayoutPlace(${i})">✕</button>
+    </div>`;
+  });
+  html+=`<button class="btn btn-ghost btn-sm" onclick="addPayoutPlace()" style="margin-top:4px">+ Add Place</button>`;
+  el.innerHTML=html;
+  // Show total %
+  const total=places.reduce((s,p)=>s+(parseFloat(p.pct)||0),0);
+  const totalEl=document.getElementById('payout-pct-total');
+  if(totalEl) totalEl.innerHTML=`Total: <span style="color:${Math.abs(total-100)<0.01?'var(--green)':'#e74c3c'};font-weight:500">${total}%</span>${Math.abs(total-100)>0.01?' (should be 100%)':''}`;
+}
+
+function updatePayoutPlace(i,field,val){
+  if(!state.payout?.places) return;
+  state.payout.places[i][field]=val;
+  saveState();
+  renderPayoutPlacesEditor();
+  renderPayout();
+}
+
+function addPayoutPlace(){
+  if(!state.payout) state.payout={buyIn:50,places:[]};
+  state.payout.places.push({label:`Place ${state.payout.places.length+1}`,pct:0});
+  saveState();
+  renderPayoutPlacesEditor();
+  document.getElementById('payout-places-count').value=state.payout.places.length;
+}
+
+function removePayoutPlace(i){
+  state.payout.places.splice(i,1);
+  saveState();
+  renderPayoutPlacesEditor();
+  document.getElementById('payout-places-count').value=state.payout.places.length;
+  renderPayout();
+}
+
+function updatePayoutPlaces(){
+  const count=parseInt(document.getElementById('payout-places-count').value)||3;
+  const places=state.payout?.places||[];
+  const defaultLabels=['1st Place','2nd Place','3rd Place','4th Place','5th Place'];
+  while(places.length<count) places.push({label:defaultLabels[places.length]||`Place ${places.length+1}`,pct:0});
+  while(places.length>count) places.pop();
+  if(!state.payout) state.payout={buyIn:50,places};
+  else state.payout.places=places;
+  saveState();
+  renderPayoutPlacesEditor();
+  renderPayout();
+}
+
+function savePayoutSettings(){
+  const buyIn=parseFloat(document.getElementById('payout-buyin').value)||50;
+  if(!state.payout) state.payout={buyIn,places:[]};
+  else state.payout.buyIn=buyIn;
+  saveState();
+  renderPayout();
+}
+
+function renderPayout(){
+  const el=document.getElementById('payout-content');
+  if(!el) return;
+  const p=state.payout||{buyIn:50,places:[{label:'1st Place',pct:50},{label:'2nd Place',pct:30},{label:'3rd Place',pct:20}]};
+  const buyIn=p.buyIn||50;
+  const places=p.places||[];
+  const players=Object.keys(state.players);
+  const n=players.length;
+  const pot=buyIn*n;
+
+  // Header: pot info
+  let html=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.2rem;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;text-align:center">
+    <div>
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Buy-In</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--gold);line-height:1">$${buyIn}</div>
+    </div>
+    <div style="color:var(--text-dim);font-size:24px;font-weight:300">×</div>
+    <div>
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Players</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--text);line-height:1">${n}</div>
+    </div>
+    <div style="color:var(--text-dim);font-size:24px;font-weight:300">=</div>
+    <div>
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Total Pot</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--green);line-height:1">$${pot}</div>
+    </div>
+  </div>`;
+
+  // Place cards
+  const placeColors=['var(--gold)','#A8A8A8','#8B6914','#e74c3c','#9B59B6','#3498DB'];
+  html+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:1.5rem">`;
+  places.forEach((place,i)=>{
+    const pct=parseFloat(place.pct)||0;
+    const prize=Math.round(pot*pct/100);
+    const color=placeColors[i]||'var(--text-muted)';
+    html+=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem;text-align:center">
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">${place.label||'Place '+(i+1)}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:${color};line-height:1;margin-bottom:2px">$${prize}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${color};line-height:1;opacity:0.5">${pct}%</div>
+    </div>`;
+  });
+  html+=`</div>`;
+
+  // Tied places note
+  html+=`<div style="font-size:12px;color:var(--text-dim);margin-bottom:1.5rem">Tied places split the combined payout equally. No tiebreakers.</div>`;
+
+  // Current standings with payouts
+  if(players.length){
+    const scores=players.map(name=>({name,...calcPoolScore(name)})).sort((a,b)=>b.total-a.total||b.groupTotal-a.groupTotal);
+    html+=`<div class="section-title" style="font-size:15px">Current Standings & Payouts</div>`;
+    html+=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">`;
+    let rank=1;
+    scores.forEach((row,i)=>{
+      if(i>0&&scores[i].total<scores[i-1].total) rank=i+1;
+      // Find if this rank gets a prize
+      const placeIdx=rank-1;
+      const prize=placeIdx<places.length?Math.round(pot*(parseFloat(places[placeIdx].pct)||0)/100):null;
+      const medal=['🥇','🥈','🥉'][rank-1]||rank;
+      html+=`<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid rgba(201,168,76,0.06)">
+        <span style="min-width:28px;text-align:center;font-size:${rank<=3?'16':'13'}px;${rank>3?'color:var(--text-dim);font-family:monospace':''}">${medal}</span>
+        <span style="flex:1;font-weight:${rank<=3?'500':'400'};font-size:13px">${row.name}</span>
+        <span style="font-family:monospace;font-size:13px;color:var(--gold)">${row.total} pts</span>
+        ${prize!==null?`<span style="font-family:monospace;font-size:14px;color:var(--green);font-weight:600;min-width:50px;text-align:right">$${prize}</span>`:'<span style="min-width:50px"></span>'}
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  el.innerHTML=html;
+}
+
 // ─── INIT ────────────────────────────────────────────────────
+const AUTO_SHEET_URL = 'https://script.google.com/macros/s/AKfycby8eDlogjUJI9ghzvOCSGZSXpnwK6v_VuNE5pZo8pzbZDbI9H-Qig8tLlCedxW2oD7utw/exec';
+
 function init(){
   loadState();
-  try{ renderPool(); }catch(e){ console.error('renderPool error:',e); }
+
+  // Apply edition config to UI
+  document.querySelectorAll('[id^="flag-img"]').forEach(img=>img.src=CFG.flagImg);
+  const et=document.getElementById('edition-title');
+  if(et) et.textContent=CFG.title;
+  document.title='WC2026 Pool — '+CFG.title;
+
+  autoLoadFromSheet(); // populates state.players from hardcoded data
+  // Verify players loaded, fallback log
+  console.log('Players after load:', Object.keys(state.players).length);
   document.getElementById('admin-pw').addEventListener('keydown',e=>{ if(e.key==='Enter') doAdminLogin(); });
 
   // KO results click delegation — set once on document, never re-added
@@ -2421,6 +2576,81 @@ function init(){
   document.querySelectorAll('.modal-overlay').forEach(m=>{
     m.addEventListener('click',e=>{ if(e.target===m) m.classList.add('hidden'); });
   });
+}
+
+function autoLoadFromSheet(){
+  loadPicksFromData(CFG.picks);
+}
+
+
+function loadPicksFromData(data){
+  console.log('loadPicksFromData called, rows:', (data.groupPicks||data.picks||[]).length);
+  if(data.status && data.status !== 'ok') { console.error('Data error:', data.message); try{renderPool();}catch(e){} return; }
+
+  const rows = data.groupPicks || data.picks || [];
+  if(rows.length){
+    const byEmail={};
+    rows.forEach(row=>{
+      const email=(row['Email']||'').toLowerCase().trim();
+      const name=(row['Name']||'').trim();
+      if(!email||!name) return;
+      if(!byEmail[email]||new Date(row['Timestamp'])>new Date(byEmail[email].ts)){
+        byEmail[email]={name,row,ts:row['Timestamp']};
+      }
+    });
+    state.players={};
+    Object.values(byEmail).forEach(({name,row})=>importPlayerRow(name,row));
+  }
+
+  if(data.koPicks&&data.koPicks.length){
+    const byEmail={};
+    data.koPicks.forEach(row=>{
+      const email=(row['Email']||'').toLowerCase().trim();
+      const name=(row['Name']||'').trim();
+      if(!email||!name) return;
+      const playerName=Object.keys(state.players).find(p=>state.players[p].email===email)||name;
+      if(!byEmail[email]||new Date(row['Timestamp'])>new Date(byEmail[email].ts)){
+        byEmail[email]={name:playerName,row,ts:row['Timestamp']};
+      }
+    });
+    Object.values(byEmail).forEach(({name,row})=>{
+      const koPicks={};
+      const KO_IDS=['r32-0','r32-1','r32-2','r32-3','r32-4','r32-5','r32-6','r32-7','r32-8','r32-9','r32-10','r32-11','r32-12','r32-13','r32-14','r32-15','r16-0','r16-1','r16-2','r16-3','r16-4','r16-5','r16-6','r16-7','qf-0','qf-1','qf-2','qf-3','sf-0','sf-1','final-0'];
+      KO_IDS.forEach(id=>{ if(row[id]) koPicks[id]=fromAbbr(row[id]); });
+      state.koPicks[name]=koPicks;
+    });
+  }
+
+  if(data.matchScores&&Object.keys(data.matchScores||{}).length){
+    state.results={};
+    Object.entries(data.matchScores).forEach(([id,r])=>{
+      state.results[id]={hg:r.hg||'',ag:r.ag||'',hfp:r.hfp||0,afp:r.afp||0};
+    });
+  }
+
+  if(data.resolvedTeams&&Object.keys(data.resolvedTeams||{}).length){
+    state.resolvedTeams={};
+    Object.entries(data.resolvedTeams).forEach(([slot,team])=>{ state.resolvedTeams[slot]=team; });
+  }
+
+  if(data.groupResults){
+    if(!state.groupResults) state.groupResults={};
+    GKEYS.forEach(letter=>{
+      const gr=data.groupResults[letter];
+      if(!gr) return;
+      state.groupResults[letter]={first:fromAbbr(gr.first||''),second:fromAbbr(gr.second||''),third:fromAbbr(gr.third||'')};
+    });
+  }
+
+  if(data.koResults&&Object.keys(data.koResults||{}).length){
+    state.koResults={};
+    Object.entries(data.koResults).forEach(([id,winner])=>{ state.koResults[id]=fromAbbr(winner); });
+  }
+
+  try{ renderPool(); }catch(e){ console.error('renderPool error:',e); }
+  try{ renderGroups(); }catch(e){}
+  try{ renderBracket(); }catch(e){}
+  try{ renderKoResultEntries(); }catch(e){}
 }
 init();
 </script>
