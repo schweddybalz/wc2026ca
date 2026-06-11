@@ -335,14 +335,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div style="margin-top:8px;font-size:11px;color:var(--text-dim)" id="payout-pct-total"></div>
     </div>
 
-    <div class="admin-section">
-      <h3>Picks Visibility</h3>
-      <p style="font-size:12px;color:var(--text-muted);margin-bottom:.8rem">Control when picks are visible to everyone on the Picks tab.</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button id="btn-group-vis" class="btn btn-secondary btn-sm" onclick="toggleSetting('groupPicksPublic')"></button>
-        <button id="btn-ko-vis" class="btn btn-secondary btn-sm" onclick="toggleSetting('koPicksPublic')"></button>
-      </div>
-    </div>
+
 
 
     <div class="admin-section">
@@ -626,7 +619,6 @@ let state={
   koResults:{},
   resolvedTeams:{},
   sheetUrl:'',
-  settings:{groupPicksPublic:false,koPicksPublic:false},
   payout:{buyIn:50,places:[{label:'1st Place',pct:50},{label:'2nd Place',pct:30},{label:'3rd Place',pct:20}]},
 };
 
@@ -638,7 +630,6 @@ function loadState(){
   state.koResults=state.koResults||{};
   state.resolvedTeams=state.resolvedTeams||{};
   state.groupResults=state.groupResults||{};
-  state.settings=state.settings||{groupPicksPublic:false,koPicksPublic:false};
   state.payout={buyIn:CFG.buyIn, places:CFG.payoutPlaces};
 }
 function saveState(){ /* no-op — no localStorage */ }
@@ -738,8 +729,8 @@ const KO_IDS_BY_ROUND={
   sf:['sf-0','sf-1'],
   final:['final-0'],
 };
-function isGroupLocked(){ return !!(state.settings&&state.settings.groupPicksPublic); }
-function isKOLocked(){ return !!(state.settings&&state.settings.koPicksPublic); }
+function isGroupLocked(){ return false; }
+function isKOLocked(){ return false; }
 
 // Get all teams that have been eliminated from KO (lost a match with a result)
 function getEliminatedTeams(){
@@ -997,15 +988,8 @@ let selectedPlayer=null;
 function renderPicks(){
   const el=document.getElementById('picks-content');
   const players=Object.keys(state.players);
-  const groupLocked=isGroupLocked()||isAdmin;
-  const koLocked=isKOLocked()||isAdmin;
 
   let html='<div class="section-title">Picks</div>';
-
-  if(!groupLocked){
-    html+=`<div class="picks-lock-banner">&#x1F512; Group picks are hidden until the tournament begins (June 11).</div>`;
-    el.innerHTML=html; return;
-  }
 
   if(!players.length){
     html+=`<div style="text-align:center;color:var(--text-muted);padding:3rem">No players yet.</div>`;
@@ -1081,9 +1065,7 @@ function renderPicks(){
 
   // ── RIGHT: KO picks ────────────────────────────────────────
   html+=`<div><div class="section-title" style="font-size:14px">KO Bracket Picks</div>`;
-  if(!koLocked){
-    html+=`<div style="background:var(--surface2);border-radius:var(--radius);padding:1rem;font-size:12px;color:var(--text-muted)">&#x1F512; KO picks are hidden until the bracket locks (June 28).</div>`;
-  } else if(!Object.keys(kp).length){
+  if(!Object.keys(kp).length){
     html+=`<div style="background:var(--surface2);border-radius:var(--radius);padding:1rem;font-size:12px;color:var(--text-muted)">No KO picks submitted yet.</div>`;
   } else {
     const ROUND_NAMES={ro32:'Round of 32',ro16:'Round of 16',qf:'Quarterfinals',sf:'Semifinals',final:'Final'};
@@ -1108,7 +1090,7 @@ function renderPicks(){
 
   // Champion summary
   const champ=kp['final-0'];
-  if(champ&&koLocked){
+  if(champ){
     const champElim=elim.has(champ);
     html+=`<div style="margin-top:1rem;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius);padding:10px 12px;display:flex;align-items:center;gap:10px">
       ${fi(champ,20)}
@@ -1205,7 +1187,6 @@ function doAdminLogin(){
 
 function renderAdmin(){
   if(state.sheetUrl) document.getElementById('sheet-url-input').value=state.sheetUrl;
-  updateVisibilityButtons();
   renderPayoutAdmin();
   renderPlayerChips();
   renderPicksEditor();
@@ -1337,25 +1318,10 @@ function toggleSetting(key){
   if(!state.settings) state.settings={};
   state.settings[key]=!state.settings[key];
   saveState();
-  updateVisibilityButtons();
   showToast('Updated','success');
 }
 
-function updateVisibilityButtons(){
-  const s=state.settings||{};
-  const bg=document.getElementById('btn-group-vis');
-  const ko=document.getElementById('btn-ko-vis');
-  if(bg){
-    bg.textContent=(s.groupPicksPublic?'🔓 Group Picks Public':'🔒 Group Picks Hidden');
-    bg.style.borderColor=s.groupPicksPublic?'rgba(45,158,86,.5)':'var(--border-bright)';
-    bg.style.color=s.groupPicksPublic?'var(--green)':'var(--text-muted)';
-  }
-  if(ko){
-    ko.textContent=(s.koPicksPublic?'🔓 KO Picks Public':'🔒 KO Picks Hidden');
-    ko.style.borderColor=s.koPicksPublic?'rgba(45,158,86,.5)':'var(--border-bright)';
-    ko.style.color=s.koPicksPublic?'var(--green)':'var(--text-muted)';
-  }
-}
+
 
 // ─── LOAD FROM SHEET ─────────────────────────────────────────
 function saveSheetUrl(){
@@ -2184,10 +2150,7 @@ function resetSim(){ simPicks={}; renderSim(); }
 function renderSim(){
   const el=document.getElementById('sim-content');
   if(!el) return;
-  if(!state.settings?.koPicksPublic&&!isAdmin){
-    el.innerHTML=`<div style="text-align:center;color:var(--text-muted);padding:3rem"><div style="font-size:32px;margin-bottom:12px">&#26917;</div><p style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:6px">Check back once the knockout stage has begun.</p><p style="font-size:12px">Simulation will be available after KO picks are locked.</p></div>`;
-    return;
-  }
+
   if(!state.resolvedTeams||!Object.keys(state.resolvedTeams).length){
     el.innerHTML=`<div style="text-align:center;color:var(--text-muted);padding:3rem"><div style="font-size:32px;margin-bottom:12px">&#9203;</div><p>Available once bracket slots are set in Admin.</p></div>`;
     return;
