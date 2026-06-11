@@ -277,6 +277,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   <div style="margin-top:.8rem;font-size:11px;color:var(--text-dim)">
     Group: 1pt advance + 1pt position · Ro32 2pts · Ro16 4pts · QF 8pts · SF 16pts · F 32pts · Max 224pts
   </div>
+  <div id="payout-content" style="margin-top:1.5rem"></div>
 </div>
 
 <!-- GROUPS PAGE -->
@@ -320,6 +321,19 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 <div class="page" id="page-admin">
   <div id="admin-locked" class="locked-banner">&#x1F510; Admin access required. <button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="showModal('admin-modal')">Unlock</button></div>
   <div id="admin-body" class="hidden">
+
+    <div class="admin-section">
+      <h3>Prize Payout Settings</h3>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:.8rem">Set the buy-in amount and prize breakdown. Percentages should add up to 100%.</p>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap">
+        <label style="font-size:12px;color:var(--text-muted)">Buy-in ($)</label>
+        <input class="form-input" id="payout-buyin" type="number" min="1" style="width:90px;font-size:13px;padding:6px 10px" onchange="savePayoutSettings()">
+        <label style="font-size:12px;color:var(--text-muted);margin-left:8px">Places</label>
+        <input class="form-input" id="payout-places-count" type="number" min="1" max="10" style="width:60px;font-size:13px;padding:6px 10px" onchange="updatePayoutPlaces()">
+      </div>
+      <div id="payout-places-editor"></div>
+      <div style="margin-top:8px;font-size:11px;color:var(--text-dim)" id="payout-pct-total"></div>
+    </div>
 
     <div class="admin-section">
       <h3>Picks Visibility</h3>
@@ -585,6 +599,7 @@ let state={
   resolvedTeams:{},
   sheetUrl:'',
   settings:{groupPicksPublic:false,koPicksPublic:false},
+  payout:{buyIn:100,places:[{label:'1st Place',pct:50},{label:'2nd Place',pct:30},{label:'3rd Place',pct:20},{label:'FORBSIE',pct:0}]},
 };
 
 function loadState(){
@@ -592,6 +607,7 @@ function loadState(){
   state.results=state.results||{};
   state.players=state.players||{};
   state.settings=state.settings||{groupPicksPublic:false,koPicksPublic:false};
+  state.payout=state.payout||{buyIn:100,places:[{label:'1st Place',pct:50},{label:'2nd Place',pct:30},{label:'3rd Place',pct:20},{label:'FORBSIE',pct:0}]};
 }
 function saveState(){
   try{ localStorage.setItem('wc2026-standings-v2',JSON.stringify(state)); }
@@ -882,6 +898,45 @@ function renderPool(){
   });
 }
 
+// ─── PAYOUT INLINE (called after renderPool) ─────────────────
+function renderPayoutInline(){
+  const el=document.getElementById('payout-content');
+  if(!el) return;
+  const p=state.payout||{buyIn:50,places:[{label:'1st Place',pct:50},{label:'2nd Place',pct:30},{label:'3rd Place',pct:20}]};
+  const buyIn=p.buyIn||50;
+  const places=p.places||[];
+  const players=Object.keys(state.players);
+  const n=players.length;
+  const pot=buyIn*n;
+  const placeColors=['var(--gold)','#A8A8A8','#8B6914','#e74c3c','#9B59B6','#3498DB'];
+
+  // Pot summary row
+  let html=`<div style="display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;text-align:center;margin-bottom:1.2rem">
+    <div><div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Buy-In</div><div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--gold);line-height:1">$${buyIn}</div></div>
+    <div style="color:var(--text-dim);font-size:20px">×</div>
+    <div><div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Players</div><div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--text);line-height:1">${n}</div></div>
+    <div style="color:var(--text-dim);font-size:20px">=</div>
+    <div><div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Total Pot</div><div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--green);line-height:1">$${pot}</div></div>
+  </div>`;
+
+  // Prize cards
+  html+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:.8rem">`;
+  places.forEach((place,i)=>{
+    const pct=parseFloat(place.pct)||0;
+    const prize=Math.round(pot*pct/100);
+    const color=placeColors[i]||'var(--text-muted)';
+    html+=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:.9rem;text-align:center">
+      <div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">${place.label||'Place '+(i+1)}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:${color};line-height:1;margin-bottom:1px">$${prize}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:${color};opacity:0.5;line-height:1">${pct}%</div>
+    </div>`;
+  });
+  html+=`</div>`;
+  html+=`<div style="font-size:11px;color:var(--text-dim)">Tied places split the combined payout equally. No tiebreakers.</div>`;
+  el.innerHTML=html;
+  try{renderPayoutInline();}catch(e){}
+}
+
 // ─── PICKS TAB ────────────────────────────────────────────────
 let selectedPlayer=null;
 
@@ -1097,6 +1152,7 @@ function doAdminLogin(){
 function renderAdmin(){
   if(state.sheetUrl) document.getElementById('sheet-url-input').value=state.sheetUrl;
   updateVisibilityButtons();
+  renderPayoutAdmin();
   renderPlayerChips();
   renderPicksEditor();
   renderBracketSlots();
@@ -2040,6 +2096,7 @@ function renderBracket(){
   html+=`</div>`;
   el.innerHTML=html;
 }
+
 
 
 // ─── SIMULATE ─────────────────────────────────────────────────
