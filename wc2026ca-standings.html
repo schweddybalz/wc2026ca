@@ -915,8 +915,15 @@ function renderPool(){
     return;
   }
   const elim=getEliminatedTeams();
-  const scores=players.map(name=>({name,...calcPoolScore(name),max:calcMaxPossible(name),champ:getChampionPick(name)}))
-    .sort((a,b)=>b.total-a.total||b.max-a.max||b.groupTotal-a.groupTotal);
+  const scores=players.map(name=>{
+    try{
+      return {name,...calcPoolScore(name),max:calcMaxPossible(name),champ:getChampionPick(name)};
+    }catch(e){
+      console.error('Score error for',name,e);
+      return {name,groupTotal:0,koTotal:0,total:0,max:224,champ:null};
+    }
+  });
+  scores.sort((a,b)=>b.total-a.total||b.max-a.max||b.groupTotal-a.groupTotal);
 
   let rank=1;
   tbody.innerHTML='';
@@ -2509,6 +2516,143 @@ function renderPayout(){
   el.innerHTML=html;
 }
 
+
+// ─── OPENFOOTBALL LIVE RESULTS ───────────────────────────────
+const OF_URL = 'https://cdn.jsdelivr.net/gh/openfootball/worldcup.json@master/2026/worldcup.json';
+const OF_PROXY = 'https://corsproxy.io/?url=';
+
+// Map openfootball team names to our internal names
+const OF_TEAM_MAP = {
+  'South Korea':   'Korea Republic',
+  'Ivory Coast':   "Cote d'Ivoire",
+  'Curaçao':       'Curacao',
+  'Czech Republic':'Czechia',
+  'USA':           'United States',
+  'Bosnia and Herzegovina': 'Bosnia & Herz.',
+  'Cape Verde':    'Cabo Verde',
+  'Saudi Arabia':  'Saudi Arabia',
+  'DR Congo':      'DR Congo',
+  // placeholders — ignored if no score
+  'UEFA Path A winner': null,
+  'UEFA Path B winner': null,
+  'UEFA Path C winner': null,
+  'UEFA Path D winner': null,
+};
+function ofTeam(name){ return OF_TEAM_MAP.hasOwnProperty(name) ? OF_TEAM_MAP[name] : name; }
+
+// Map openfootball match to our MATCHES array match id
+function ofMatchId(t1, t2, group){
+  const grpLetter = group.replace('Group ','');
+  const our1 = ofTeam(t1), our2 = ofTeam(t2);
+  if(!our1||!our2) return null;
+  const m = MATCHES.find(m=>
+    m.g===grpLetter &&
+    ((m.h===our1&&m.a===our2)||(m.h===our2&&m.a===our1))
+  );
+  return m ? m.id : null;
+}
+
+async function fetchOpenFootball(){
+  let data = null;
+  try{
+    const res = await fetch(OF_URL + '?t=' + Math.floor(Date.now()/300000));  // 5-min cache buster
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    data = await res.json();
+    console.log('openfootball fetched from jsDelivr');
+  }catch(e){
+    console.warn('jsDelivr fetch failed:', e.message);
+    // Try CORS proxy fallback
+    const proxies = [
+      u => 'https://corsproxy.io/?' + encodeURIComponent(u),
+      u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+    ];
+    for(const proxy of proxies){
+      try{
+        const res = await fetch(proxy(OF_URL));
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        data = await res.json();
+        console.log('openfootball fetched via proxy');
+        break;
+      }catch(e){ console.warn('Proxy failed:',e.message); }
+    }
+  }
+  if(!data){ console.warn('All openfootball sources failed'); return; }
+
+  let updated = 0;
+  (data.matches||[]).forEach(m=>{
+    if(!m.score||!m.score.ft) return;
+    if(!m.group) return;
+    const id = ofMatchId(m.team1, m.team2, m.group);
+    if(!id) return;
+    const [hg, ag] = m.score.ft;
+    const match = MATCHES.find(x=>x.id===id);
+    const our1 = ofTeam(m.team1);
+    const isSwapped = match && match.h !== our1;
+    state.results[id] = {
+      hg: isSwapped ? ag.toString() : hg.toString(),
+      ag: isSwapped ? hg.toString() : ag.toString(),
+      hfp: 0, afp: 0,
+    };
+    updated++;
+  });
+  console.log('openfootball: loaded '+updated+' match results');
+  try{renderGroups();}catch(e){}
+  try{renderPool();}catch(e){}
+}
+
+// ─── FETCH RESULTS FROM SHEET ─────────────────────────────────
+async function fetchSheetResults(){
+  const url = CFG.sheetUrl;
+  if(!url){ console.warn('No sheet URL configured'); return; }
+  try{
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    let text = await res.text();
+    const j=text.indexOf('{'),k=text.lastIndexOf('}');
+    if(j>=0&&k>=0) text=text.slice(j,k+1);
+    const data = JSON.parse(text);
+    if(data.status!=='ok') throw new Error(data.message||'error');
+
+    // Match scores
+    if(data.matchScores&&Object.keys(data.matchScores).length){
+      Object.entries(data.matchScores).forEach(([id,r])=>{
+        state.results[id]={hg:r.hg||'',ag:r.ag||'',hfp:r.hfp||0,afp:r.afp||0};
+      });
+      console.log('Sheet: loaded '+Object.keys(data.matchScores).length+' match scores');
+    }
+
+    // KO results
+    if(data.koResults&&Object.keys(data.koResults).length){
+      state.koResults={};
+      Object.entries(data.koResults).forEach(([id,w])=>{ state.koResults[id]=w; });
+    }
+
+    // Bracket slots
+    if(data.resolvedTeams&&Object.keys(data.resolvedTeams).length){
+      Object.entries(data.resolvedTeams).forEach(([slot,team])=>{ state.resolvedTeams[slot]=team; });
+    }
+
+    // Group results (for scoring)
+    if(data.groupResults){
+      if(!state.groupResults) state.groupResults={};
+      const GKEYS2=['A','B','C','D','E','F','G','H','I','J','K','L'];
+      GKEYS2.forEach(letter=>{
+        const gr=data.groupResults[letter];
+        if(!gr) return;
+        state.groupResults[letter]={first:gr.first||'',second:gr.second||'',third:gr.third||''};
+      });
+    }
+
+    try{renderGroups();}catch(e){}
+    try{renderPool();}catch(e){}
+    try{renderBracket();}catch(e){}
+  }catch(err){
+    console.warn('Sheet fetch failed:',err.message);
+    // Fall back to openfootball
+    fetchOpenFootball();
+  }
+}
+
 // ─── INIT ────────────────────────────────────────────────────
 const AUTO_SHEET_URL = 'https://script.google.com/macros/s/AKfycby8eDlogjUJI9ghzvOCSGZSXpnwK6v_VuNE5pZo8pzbZDbI9H-Qig8tLlCedxW2oD7utw/exec';
 
@@ -2531,8 +2675,7 @@ function init(){
     :'https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/flags/4x3/us.svg';
 
   autoLoadFromSheet(); // populates state.players from hardcoded data
-  // Verify players loaded, fallback log
-  console.log('Players after load:', Object.keys(state.players).length);
+  fetchSheetResults(); // auto-fetch match results from sheet
   document.getElementById('admin-pw').addEventListener('keydown',e=>{ if(e.key==='Enter') doAdminLogin(); });
 
   // KO results click delegation — set once on document, never re-added
@@ -2572,6 +2715,7 @@ function loadPicksFromData(data){
     });
     state.players={};
     Object.values(byEmail).forEach(({name,row})=>importPlayerRow(name,row));
+    console.log('Players imported:', Object.keys(state.players).length, Object.keys(state.players));
   }
 
   if(data.koPicks&&data.koPicks.length){
@@ -2620,9 +2764,9 @@ function loadPicksFromData(data){
   }
 
   try{ renderPool(); }catch(e){ console.error('renderPool error:',e); }
-  try{ renderGroups(); }catch(e){}
-  try{ renderBracket(); }catch(e){}
-  try{ renderKoResultEntries(); }catch(e){}
+  try{ renderGroups(); }catch(e){ console.error('renderGroups error:',e); }
+  try{ renderBracket(); }catch(e){ console.error('renderBracket error:',e); }
+  try{ renderKoResultEntries(); }catch(e){ console.error('renderKoResultEntries error:',e); }
 }
 init();
 </script>
