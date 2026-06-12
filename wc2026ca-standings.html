@@ -2517,89 +2517,6 @@ function renderPayout(){
 }
 
 
-// ─── OPENFOOTBALL LIVE RESULTS ───────────────────────────────
-const OF_URL = 'https://cdn.jsdelivr.net/gh/openfootball/worldcup.json@master/2026/worldcup.json';
-const OF_PROXY = 'https://corsproxy.io/?url=';
-
-// Map openfootball team names to our internal names
-const OF_TEAM_MAP = {
-  'South Korea':   'Korea Republic',
-  'Ivory Coast':   "Cote d'Ivoire",
-  'Curaçao':       'Curacao',
-  'Czech Republic':'Czechia',
-  'USA':           'United States',
-  'Bosnia and Herzegovina': 'Bosnia & Herz.',
-  'Cape Verde':    'Cabo Verde',
-  'Saudi Arabia':  'Saudi Arabia',
-  'DR Congo':      'DR Congo',
-  // placeholders — ignored if no score
-  'UEFA Path A winner': null,
-  'UEFA Path B winner': null,
-  'UEFA Path C winner': null,
-  'UEFA Path D winner': null,
-};
-function ofTeam(name){ return OF_TEAM_MAP.hasOwnProperty(name) ? OF_TEAM_MAP[name] : name; }
-
-// Map openfootball match to our MATCHES array match id
-function ofMatchId(t1, t2, group){
-  const grpLetter = group.replace('Group ','');
-  const our1 = ofTeam(t1), our2 = ofTeam(t2);
-  if(!our1||!our2) return null;
-  const m = MATCHES.find(m=>
-    m.g===grpLetter &&
-    ((m.h===our1&&m.a===our2)||(m.h===our2&&m.a===our1))
-  );
-  return m ? m.id : null;
-}
-
-async function fetchOpenFootball(){
-  let data = null;
-  try{
-    const res = await fetch(OF_URL + '?t=' + Math.floor(Date.now()/300000));  // 5-min cache buster
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    data = await res.json();
-    console.log('openfootball fetched from jsDelivr');
-  }catch(e){
-    console.warn('jsDelivr fetch failed:', e.message);
-    // Try CORS proxy fallback
-    const proxies = [
-      u => 'https://corsproxy.io/?' + encodeURIComponent(u),
-      u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
-    ];
-    for(const proxy of proxies){
-      try{
-        const res = await fetch(proxy(OF_URL));
-        if(!res.ok) throw new Error('HTTP '+res.status);
-        data = await res.json();
-        console.log('openfootball fetched via proxy');
-        break;
-      }catch(e){ console.warn('Proxy failed:',e.message); }
-    }
-  }
-  if(!data){ console.warn('All openfootball sources failed'); return; }
-
-  let updated = 0;
-  (data.matches||[]).forEach(m=>{
-    if(!m.score||!m.score.ft) return;
-    if(!m.group) return;
-    const id = ofMatchId(m.team1, m.team2, m.group);
-    if(!id) return;
-    const [hg, ag] = m.score.ft;
-    const match = MATCHES.find(x=>x.id===id);
-    const our1 = ofTeam(m.team1);
-    const isSwapped = match && match.h !== our1;
-    state.results[id] = {
-      hg: isSwapped ? ag.toString() : hg.toString(),
-      ag: isSwapped ? hg.toString() : ag.toString(),
-      hfp: 0, afp: 0,
-    };
-    updated++;
-  });
-  console.log('openfootball: loaded '+updated+' match results');
-  try{renderGroups();}catch(e){}
-  try{renderPool();}catch(e){}
-}
-
 // ─── FETCH RESULTS FROM SHEET ─────────────────────────────────
 async function fetchSheetResults(){
   const url = CFG.sheetUrl;
@@ -2648,8 +2565,6 @@ async function fetchSheetResults(){
     try{renderBracket();}catch(e){}
   }catch(err){
     console.warn('Sheet fetch failed:',err.message);
-    // Fall back to openfootball
-    fetchOpenFootball();
   }
 }
 
