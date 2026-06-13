@@ -630,6 +630,7 @@ function loadState(){
   state.koResults=state.koResults||{};
   state.resolvedTeams=state.resolvedTeams||{};
   state.groupResults=state.groupResults||{};
+  state.teamFP=state.teamFP||{};
   state.payout={buyIn:CFG.buyIn, places:CFG.payoutPlaces};
 }
 function saveState(){ /* no-op — no localStorage */ }
@@ -649,8 +650,6 @@ function calcGroupTable(letter){
     table[m.h].p++; table[m.a].p++;
     table[m.h].gf+=hg; table[m.h].ga+=ag;
     table[m.a].gf+=ag; table[m.a].ga+=hg;
-    table[m.h].fp+=parseInt(r.hfp)||0;
-    table[m.a].fp+=parseInt(r.afp)||0;
     if(hg>ag){
       table[m.h].w++; table[m.h].pts+=3; table[m.a].l++;
     } else if(hg<ag){
@@ -660,7 +659,9 @@ function calcGroupTable(letter){
       table[m.a].d++; table[m.a].pts+=1;
     }
   });
-  teams.forEach(t=>{ table[t].gd=table[t].gf-table[t].ga; });
+  // Apply team-level FP from sheet
+  const tfp=state.teamFP||{};
+  teams.forEach(t=>{ table[t].gd=table[t].gf-table[t].ga; table[t].fp=tfp[t]||0; });
 
   // Sort with full FIFA tiebreaker chain
   const sorted=Object.entries(table).sort(([,a],[,b])=>{
@@ -2517,9 +2518,12 @@ function renderPayout(){
 }
 
 
-// ─── FETCH RESULTS FROM SHEET ─────────────────────────────────
+// Scores always come from USA sheet regardless of edition
+const SCORES_URL = 'https://script.google.com/macros/s/AKfycby8eDlogjUJI9ghzvOCSGZSXpnwK6v_VuNE5pZo8pzbZDbI9H-Qig8tLlCedxW2oD7utw/exec';
+
+
 async function fetchSheetResults(){
-  const url = CFG.sheetUrl;
+  const url = SCORES_URL;
   if(!url){ console.warn('No sheet URL configured'); return; }
   try{
     const res = await fetch(url);
@@ -2558,6 +2562,11 @@ async function fetchSheetResults(){
         if(!gr) return;
         state.groupResults[letter]={first:gr.first||'',second:gr.second||'',third:gr.third||''};
       });
+    }
+
+    // Team fair play points
+    if(data.teamFP&&Object.keys(data.teamFP).length){
+      state.teamFP=data.teamFP;
     }
 
     try{renderGroups();}catch(e){}
