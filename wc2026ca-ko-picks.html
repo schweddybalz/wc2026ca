@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/flags/4x3/us.svg">
+<link id="favicon" rel="icon" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/flags/4x3/us.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="page-title">World Cup 2026 Pool — USA Edition — KO Picks</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
@@ -86,9 +86,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 </head>
 <body>
 <header class="header">
-  <img src="https://flagcdn.com/w40/us.png" height="20" style="border-radius:2px" alt="">
+  <img id="flag-1" src="https://flagcdn.com/w40/us.png" height="20" style="border-radius:2px" alt="">
   <div class="logo">World Cup 2026 Pool <span id="logo-edition">USA Edition — KO Picks</span></div>
-  <img src="https://flagcdn.com/w40/us.png" height="20" style="border-radius:2px" alt="">
+  <img id="flag-2" src="https://flagcdn.com/w40/us.png" height="20" style="border-radius:2px" alt="">
 </header>
 <div class="toast" id="toast"></div>
 <main class="main">
@@ -102,9 +102,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <div class="card" style="max-width:560px">
       <h2>Knockout Round Picks</h2>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:1.25rem">
-        <img src="https://flagcdn.com/w40/us.png" height="16" style="border-radius:2px" alt="">
+        <img id="flag-3" src="https://flagcdn.com/w40/us.png" height="16" style="border-radius:2px" alt="">
         <span id="badge-edition" style="color:var(--gold);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase">USA Edition</span>
-        <img src="https://flagcdn.com/w40/us.png" height="16" style="border-radius:2px" alt="">
+        <img id="flag-4" src="https://flagcdn.com/w40/us.png" height="16" style="border-radius:2px" alt="">
       </div>
       <div style="background:var(--surface2);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:1rem">
         <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">Knockout Scoring</div>
@@ -660,6 +660,13 @@ async function fetchResolvedTeams(){
 document.getElementById('page-title').textContent = `World Cup 2026 Pool — ${EDITION_TITLE} — KO Picks`;
 document.getElementById('logo-edition').textContent = `${EDITION_TITLE} — KO Picks`;
 document.getElementById('badge-edition').textContent = EDITION_TITLE;
+// Apply edition flags and favicon
+const flagUrl = EDITION==='CA' ? 'https://flagcdn.com/w40/ca.png' : 'https://flagcdn.com/w40/us.png';
+const faviconUrl = EDITION==='CA'
+  ? 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/flags/4x3/ca.svg'
+  : 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/flags/4x3/us.svg';
+[1,2,3,4].forEach(i=>{ const el=document.getElementById('flag-'+i); if(el) el.src=flagUrl; });
+const fv=document.getElementById('favicon'); if(fv) fv.href=faviconUrl;
 fetchResolvedTeams(); // load bracket slots from sheet on page load
 
 document.getElementById('inp-name').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('inp-email').focus(); });
