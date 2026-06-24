@@ -430,7 +430,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <script>
 // ─── EDITION CONFIG ───────────────────────────────────────────
-const EDITION = 'CA'; // Change to 'CA' for Canada edition
+const EDITION = location.pathname.toLowerCase().includes('ca-standings') ? 'CA' : 'USA';
 
 const EDITION_CONFIG = {
   USA: {
@@ -2044,11 +2044,11 @@ function renderBracket(){
   const SLOT_H=TOTAL_H/16; // height per Ro32 slot
 
   const ROUNDS=[
-    {key:'ro32', matches:rounds.ro32, label:'Round of 32', pts:4,  count:16},
-    {key:'ro16', matches:rounds.ro16, label:'Rd of 16',    pts:8,  count:8},
-    {key:'qf',   matches:rounds.qf,   label:'QF',          pts:16, count:4},
-    {key:'sf',   matches:rounds.sf,   label:'SF',          pts:32, count:2},
-    {key:'final',matches:rounds.final,label:'Final',       pts:64, count:1},
+    {key:'ro32', matches:rounds.ro32, label:'Round of 32', pts:2,  count:16},
+    {key:'ro16', matches:rounds.ro16, label:'Rd of 16',    pts:4,  count:8},
+    {key:'qf',   matches:rounds.qf,   label:'QF',          pts:8,  count:4},
+    {key:'sf',   matches:rounds.sf,   label:'SF',          pts:16, count:2},
+    {key:'final',matches:rounds.final,label:'Final',       pts:32, count:1},
   ];
 
   const totalW = ROUNDS.length * COL_W + 20;
