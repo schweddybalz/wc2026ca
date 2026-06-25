@@ -779,6 +779,8 @@ function calcMaxPossible(playerName){
   const koResults=state.koResults||{};
 
   // ── Group max ─────────────────────────────────────────────────
+  // 36 possible picks (12 groups × 1st/2nd, but only 8 groups have a 3rd-place pick)
+  // = 24 picks × 2pts + 8 picks × 2pts = 64 max. Each pick scored independently 0/1/2.
   const thirds=getAllThirds();
   const advancingThirds=thirds.slice(0,8).map(t=>t.name);
   let groupMax=0;
@@ -788,20 +790,31 @@ function calcMaxPossible(playerName){
       const r=state.results[m.id];
       return r&&r.hg!==''&&r.hg!==undefined&&r.ag!==''&&r.ag!==undefined&&!isNaN(parseInt(r.hg))&&!isNaN(parseInt(r.ag));
     });
+    const picks=(player.groupPicks&&player.groupPicks[letter])||{};
+
     if(!allPlayed){
-      groupMax+=6; // max 3 picks × 2pts
+      // Group not finished — each pick the player actually made can still earn full 2pts
+      [1,2,3].forEach(rank=>{
+        const t=picks[rank];
+        groupMax += t ? 2 : 0;
+      });
       return;
     }
-    // Group finished — count only what was actually earned
+
+    // Group finished — score each pick against the final table
     const table=calcGroupTable(letter);
-    const picks=(player.groupPicks&&player.groupPicks[letter])||{};
     [1,2,3].forEach(rank=>{
-      const t=picks[rank]; if(!t) return;
-      const adv=table[0]?.name===t||table[1]?.name===t||(advancingThirds.includes(t)&&table[2]?.name===t);
-      if(adv){ groupMax++; if(table.findIndex(r=>r.name===t)+1===rank) groupMax++; }
+      const t=picks[rank];
+      if(!t) return; // no pick made = 0, contributes nothing
+      const actualPos = table[0]?.name===t ? 1
+                       : table[1]?.name===t ? 2
+                       : (advancingThirds.includes(t)&&table[2]?.name===t) ? 3
+                       : null;
+      if(actualPos===null){ groupMax+=0; }      // didn't advance: 0/2
+      else if(actualPos===rank){ groupMax+=2; }  // exact position: 2/2
+      else{ groupMax+=1; }                       // advanced, wrong slot: 1/2
     });
   });
-  groupMax=Math.min(groupMax,64);
 
   // ── Build eliminated set from koResults ───────────────────────
   const eliminated=new Set();
