@@ -1681,10 +1681,10 @@ function renderBracketSlots(){
     {slot:'3C/D/F/G/H',    groups:['C','D','F','G','H']},
     {slot:'3B/E/F/I/J',    groups:['B','E','F','I','J']},
     {slot:'3A/E/H/I/J',    groups:['A','E','H','I','J']},
-    {slot:'3A/B/C/D/G/H',  groups:['A','B','C','D','G','H']},
     {slot:'3C/E/F/H/I',    groups:['C','E','F','H','I']},
-    {slot:'3D/E/H/I/J/K',  groups:['D','E','H','I','J','K']},
+    {slot:'3E/H/I/J/K',    groups:['E','H','I','J','K']},
     {slot:'3E/F/G/I/J',    groups:['E','F','G','I','J']},
+    {slot:'3D/E/I/J/L',    groups:['D','E','I','J','L']},
   ];
 
   let html='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px">';
@@ -1829,11 +1829,11 @@ function renderKoResultEntries(){
   if(!state.koResults) state.koResults={};
 
   const ROUND_GROUPS=[
-    {label:'Round of 32', pts:4,  ids:['r32-0','r32-1','r32-2','r32-3','r32-4','r32-5','r32-6','r32-7','r32-8','r32-9','r32-10','r32-11','r32-12','r32-13','r32-14','r32-15']},
-    {label:'Rd of 16',    pts:8,  ids:['r16-0','r16-1','r16-2','r16-3','r16-4','r16-5','r16-6','r16-7']},
-    {label:'QF',          pts:16, ids:['qf-0','qf-1','qf-2','qf-3']},
-    {label:'SF',          pts:32, ids:['sf-0','sf-1']},
-    {label:'Final',       pts:64, ids:['final-0']},
+    {label:'Round of 32', pts:2,  ids:['r32-0','r32-1','r32-2','r32-3','r32-4','r32-5','r32-6','r32-7','r32-8','r32-9','r32-10','r32-11','r32-12','r32-13','r32-14','r32-15']},
+    {label:'Rd of 16',    pts:4,  ids:['r16-0','r16-1','r16-2','r16-3','r16-4','r16-5','r16-6','r16-7']},
+    {label:'QF',          pts:8,  ids:['qf-0','qf-1','qf-2','qf-3']},
+    {label:'SF',          pts:16, ids:['sf-0','sf-1']},
+    {label:'Final',       pts:32, ids:['final-0']},
   ];
 
   const MATCH_H=50, MATCH_W=160, COL_W=178, HEADER_H=40;
@@ -1987,11 +1987,11 @@ const RO32_SLOTS=[
   {id:'r32-8',  home:'1C',          away:'2F',            date:'Jun 29'},
   {id:'r32-9',  home:'2E',          away:'2I',            date:'Jun 30'},
   {id:'r32-10', home:'1A',          away:'3C/E/F/H/I',   date:'Jun 30'},
-  {id:'r32-11', home:'1L',          away:'3D/E/H/I/J/K', date:'Jul 1'},
+  {id:'r32-11', home:'1L',          away:'3E/H/I/J/K',   date:'Jul 1'},
   {id:'r32-12', home:'1J',          away:'2H',            date:'Jul 3'},
   {id:'r32-13', home:'2D',          away:'2G',            date:'Jul 3'},
   {id:'r32-14', home:'1B',          away:'3E/F/G/I/J',   date:'Jul 2'},
-  {id:'r32-15', home:'1K',          away:'3A/B/C/D/G/H', date:'Jul 3'},
+  {id:'r32-15', home:'1K',          away:'3D/E/I/J/L',   date:'Jul 3'},
 ];
 
 const RO16_PAIRS=[[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15]];
@@ -2265,11 +2265,11 @@ function renderSim(){
   const TOTAL_H=16*MATCH_H+15*4;
   const SLOT_H=TOTAL_H/16;
   const ROUNDS=[
-    {key:'ro32',label:'Ro32',pts:4,ids:roundIds.ro32},
-    {key:'ro16',label:'Ro16',pts:8,ids:roundIds.ro16},
-    {key:'qf',  label:'QF', pts:16,ids:roundIds.qf},
-    {key:'sf',  label:'SF', pts:32,ids:roundIds.sf},
-    {key:'final',label:'Final',pts:64,ids:roundIds.final},
+    {key:'ro32',label:'Ro32',pts:2,ids:roundIds.ro32},
+    {key:'ro16',label:'Ro16',pts:4,ids:roundIds.ro16},
+    {key:'qf',  label:'QF', pts:8,ids:roundIds.qf},
+    {key:'sf',  label:'SF', pts:16,ids:roundIds.sf},
+    {key:'final',label:'Final',pts:32,ids:roundIds.final},
   ];
 
   function simMatchCY(ri,mi){
