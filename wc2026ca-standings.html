@@ -99,6 +99,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 /* ADMIN */
 .admin-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.1rem;margin-bottom:1rem;}
 .admin-section h3{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:var(--gold);margin-bottom:.8rem;}
+.admin-section summary::-webkit-details-marker{display:none}
+.admin-section summary{margin-bottom:.8rem}
+.admin-section summary::before{content:'▸ ';color:var(--gold);font-size:11px;transition:transform .15s}
+.admin-section details[open] summary::before{content:'▾ '}
 .match-entry{display:grid;grid-template-columns:1fr auto 60px auto 1fr auto;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(201,168,76,0.06);font-size:13px;}
 .match-entry:last-child{border-bottom:none;}
 .score-input{width:48px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:5px 8px;color:var(--text);font-family:'DM Mono',monospace;font-size:14px;text-align:center;}
@@ -361,9 +365,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
 
     <div class="admin-section">
-      <h3>Player Picks</h3>
-      <p style="font-size:12px;color:var(--text-muted);margin-bottom:.8rem">For each player, enter which teams they picked 1st, 2nd, and 3rd in each group.</p>
-      <div id="picks-editor"></div>
+      <details>
+        <summary style="cursor:pointer;list-style:none"><h3 style="display:inline">Player Picks</h3></summary>
+        <p style="font-size:12px;color:var(--text-muted);margin:.5rem 0 .8rem">For each player, enter which teams they picked 1st, 2nd, and 3rd in each group.</p>
+        <div id="picks-editor"></div>
+      </details>
     </div>
 
 
@@ -431,6 +437,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 <script>
 // ─── EDITION CONFIG ───────────────────────────────────────────
 const EDITION = location.pathname.toLowerCase().includes('ca-standings') ? 'CA' : 'USA';
+const KO_PICKS_VISIBLE = false; // set to true once the knockout stage begins
 
 const EDITION_CONFIG = {
   USA: {
@@ -1086,7 +1093,9 @@ function renderPicks(){
 
   // ── RIGHT: KO picks ────────────────────────────────────────
   html+=`<div><div class="section-title" style="font-size:14px">KO Bracket Picks</div>`;
-  if(!Object.keys(kp).length){
+  if(!KO_PICKS_VISIBLE){
+    html+=`<div style="background:var(--surface2);border-radius:var(--radius);padding:1rem;font-size:12px;color:var(--text-muted)">🔒 KO picks will be revealed once the knockout stage begins.</div>`;
+  } else if(!Object.keys(kp).length){
     html+=`<div style="background:var(--surface2);border-radius:var(--radius);padding:1rem;font-size:12px;color:var(--text-muted)">No KO picks submitted yet.</div>`;
   } else {
     const ROUND_NAMES={ro32:'Round of 32',ro16:'Round of 16',qf:'Quarterfinals',sf:'Semifinals',final:'Final'};
@@ -1111,7 +1120,7 @@ function renderPicks(){
 
   // Champion summary
   const champ=kp['final-0'];
-  if(champ){
+  if(champ&&KO_PICKS_VISIBLE){
     const champElim=elim.has(champ);
     html+=`<div style="margin-top:1rem;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius);padding:10px 12px;display:flex;align-items:center;gap:10px">
       ${fi(champ,20)}
@@ -1537,6 +1546,11 @@ function renderKOStats(el,players){
   const n=players.length;
   const hasKoPicks=Object.values(state.koPicks||{}).some(p=>Object.keys(p).length>0);
 
+  if(!KO_PICKS_VISIBLE){
+    el.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:3rem">🔒 KO pick stats will be revealed once the knockout stage begins.</div>';
+    return;
+  }
+
   if(!hasKoPicks){
     el.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:3rem">No KO picks loaded yet.</div>';
     return;
@@ -1551,9 +1565,6 @@ function renderKOStats(el,players){
     {label:'Quarterfinals', sub:'% picked to reach the QFs',      ids:['r16-0','r16-1','r16-2','r16-3','r16-4','r16-5','r16-6','r16-7']},
     {label:'Round of 16',   sub:'% picked to reach Ro16',         ids:['r32-0','r32-1','r32-2','r32-3','r32-4','r32-5','r32-6','r32-7','r32-8','r32-9','r32-10','r32-11','r32-12','r32-13','r32-14','r32-15']},
   ];
-
-  // Build sub-tabs for KO rounds
-  let koSubTab=el.dataset.koSubTab||'Champion';
 
   // Count picks per team per round
   function getTeamCounts(ids){
@@ -1571,47 +1582,36 @@ function renderKOStats(el,players){
     return Object.values(counts).sort((a,b)=>b.count-a.count||a.team.localeCompare(b.team));
   }
 
-  // Sub-tab HTML
-  let html=`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:1rem;border-bottom:1px solid var(--border);padding-bottom:0">`;
-  KO_STAT_ROUNDS.forEach(({label})=>{
-    const active=koSubTab===label;
-    html+=`<button onclick="setKoStatTab(this,'${label}')" style="background:none;border:none;padding:6px 12px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;margin-bottom:-1px;
-      color:${active?'var(--gold)':'var(--text-muted)'};border-bottom:2px solid ${active?'var(--gold)':'transparent'}">${label}</button>`;
+  let html='';
+  KO_STAT_ROUNDS.forEach(round=>{
+    const teams=getTeamCounts(round.ids);
+    const maxCount=teams[0]?.count||1;
+
+    html+=`<div style="margin-bottom:1.5rem">`;
+    html+=`<div class="section-title" style="font-size:14px">${round.label}</div>`;
+    html+=`<div style="font-size:11px;color:var(--text-muted);margin-bottom:.6rem">${round.sub} · ${n} player${n!==1?'s':''}</div>`;
+    html+=`<div class="stat-group">`;
+
+    if(!teams.length){
+      html+=`<div style="text-align:center;color:var(--text-dim);padding:1rem;font-size:12px">No picks yet for this round.</div>`;
+    } else {
+      teams.forEach(({team,count})=>{
+        const pct=Math.round(count/n*100);
+        const barW=Math.round(count/maxCount*100);
+        html+=`<div class="stat-team-row">
+          ${fi(team,16)}<span style="flex:0 0 110px;font-size:12px;font-family:'DM Mono',monospace;font-weight:500">${abbr(team)}</span>
+          <div style="flex:1;display:flex;align-items:center;gap:8px">
+            <div class="stat-bar-wrap" style="flex:1"><div class="stat-bar" style="width:${barW}%;background:var(--gold);opacity:0.7"></div></div>
+            <span style="font-size:12px;font-family:'DM Mono',monospace;color:var(--gold);min-width:38px;text-align:right;font-weight:500">${pct}%</span>
+            <span style="font-size:11px;color:var(--text-dim);min-width:28px;text-align:right">${count}/${n}</span>
+          </div>
+        </div>`;
+      });
+    }
+    html+=`</div></div>`;
   });
-  html+=`</div>`;
 
-  const round=KO_STAT_ROUNDS.find(r=>r.label===koSubTab)||KO_STAT_ROUNDS[0];
-  const teams=getTeamCounts(round.ids);
-  const maxCount=teams[0]?.count||1;
-
-  html+=`<div style="font-size:11px;color:var(--text-muted);margin-bottom:1rem">${round.sub} · ${n} player${n!==1?'s':''}</div>`;
-  html+=`<div class="stat-group">`;
-
-  if(!teams.length){
-    html+=`<div style="text-align:center;color:var(--text-dim);padding:1rem;font-size:12px">No picks yet for this round.</div>`;
-  } else {
-    teams.forEach(({team,count})=>{
-      const pct=Math.round(count/n*100);
-      const barW=Math.round(count/maxCount*100);
-      html+=`<div class="stat-team-row">
-        ${fi(team,16)}<span style="flex:0 0 110px;font-size:12px;font-family:'DM Mono',monospace;font-weight:500">${abbr(team)}</span>
-        <div style="flex:1;display:flex;align-items:center;gap:8px">
-          <div class="stat-bar-wrap" style="flex:1"><div class="stat-bar" style="width:${barW}%;background:var(--gold);opacity:0.7"></div></div>
-          <span style="font-size:12px;font-family:'DM Mono',monospace;color:var(--gold);min-width:38px;text-align:right;font-weight:500">${pct}%</span>
-          <span style="font-size:11px;color:var(--text-dim);min-width:28px;text-align:right">${count}/${n}</span>
-        </div>
-      </div>`;
-    });
-  }
-  html+=`</div>`;
   el.innerHTML=html;
-  el.dataset.koSubTab=koSubTab;
-}
-
-function setKoStatTab(btn,label){
-  const el=document.getElementById('stats-content');
-  el.dataset.koSubTab=label;
-  renderStats();
 }
 
 // ─── LOAD KO PICKS FROM SHEET ─────────────────────────────────
@@ -2172,6 +2172,11 @@ function renderSim(){
   const el=document.getElementById('sim-content');
   if(!el) return;
 
+  if(!KO_PICKS_VISIBLE){
+    el.innerHTML=`<div style="text-align:center;color:var(--text-muted);padding:3rem"><div style="font-size:32px;margin-bottom:12px">&#128274;</div><p>Check back once the knockout stage has begun.</p><p style="font-size:12px;margin-top:6px">Simulation will be available once KO picks are revealed.</p></div>`;
+    return;
+  }
+
   if(!state.resolvedTeams||!Object.keys(state.resolvedTeams).length){
     el.innerHTML=`<div style="text-align:center;color:var(--text-muted);padding:3rem"><div style="font-size:32px;margin-bottom:12px">&#9203;</div><p>Available once bracket slots are set in Admin.</p></div>`;
     return;
@@ -2558,7 +2563,7 @@ async function fetchSheetResults(){
     // KO results
     if(data.koResults&&Object.keys(data.koResults).length){
       state.koResults={};
-      Object.entries(data.koResults).forEach(([id,w])=>{ state.koResults[id]=w; });
+      Object.entries(data.koResults).forEach(([id,w])=>{ state.koResults[id]=fromAbbr(w)||w; });
     }
 
     // Bracket slots
