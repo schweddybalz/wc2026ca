@@ -2569,7 +2569,47 @@ function renderPayout(){
 const SCORES_URL = 'https://script.google.com/macros/s/AKfycby8eDlogjUJI9ghzvOCSGZSXpnwK6v_VuNE5pZo8pzbZDbI9H-Qig8tLlCedxW2oD7utw/exec';
 
 
+async function fetchKoPicksForEdition(){
+  const url = CFG.sheetUrl;
+  if(!url){ console.warn('No edition sheet URL configured for KO picks'); return; }
+  try{
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    let text = await res.text();
+    const j=text.indexOf('{'),k=text.lastIndexOf('}');
+    if(j>=0&&k>=0) text=text.slice(j,k+1);
+    const data = JSON.parse(text);
+    if(data.status!=='ok') throw new Error(data.message||'error');
+
+    if(data.koPicks&&data.koPicks.length){
+      const byEmail={};
+      data.koPicks.forEach(row=>{
+        const email=(row['Email']||'').toLowerCase().trim();
+        const name=(row['Name']||'').trim();
+        if(!email||!name) return;
+        if(!byEmail[email]||new Date(row['Timestamp'])>new Date(byEmail[email].ts)){
+          byEmail[email]={name,row,ts:row['Timestamp']};
+        }
+      });
+      const KO_IDS=['r32-0','r32-1','r32-2','r32-3','r32-4','r32-5','r32-6','r32-7','r32-8','r32-9','r32-10','r32-11','r32-12','r32-13','r32-14','r32-15','r16-0','r16-1','r16-2','r16-3','r16-4','r16-5','r16-6','r16-7','qf-0','qf-1','qf-2','qf-3','sf-0','sf-1','final-0'];
+      let matched=0, unmatched=[];
+      Object.values(byEmail).forEach(({name,row})=>{
+        const playerName=Object.keys(state.players).find(p=>state.players[p].email===row['Email']?.toLowerCase().trim())||name;
+        if(!Object.keys(state.players).includes(playerName)) unmatched.push(name);
+        else matched++;
+        const koPicks={};
+        KO_IDS.forEach(id=>{ if(row[id]) koPicks[id]=fromAbbr(row[id]); });
+        state.koPicks[playerName]=koPicks;
+      });
+      console.log('Edition sheet ('+EDITION+'): loaded KO picks for '+matched+' matched player(s)'+(unmatched.length?'; UNMATCHED (no group-picks email match): '+unmatched.join(', '):''));
+    }
+  }catch(err){
+    console.warn('KO picks fetch failed for edition '+EDITION+':',err.message);
+  }
+}
+
 async function fetchSheetResults(){
+  // ── Part 1: shared real-world data — always from the USA sheet ──
   const url = SCORES_URL;
   if(!url){ console.warn('No sheet URL configured'); return; }
   try{
@@ -2615,40 +2655,18 @@ async function fetchSheetResults(){
     if(data.teamFP&&Object.keys(data.teamFP).length){
       state.teamFP=data.teamFP;
     }
-
-    // KO picks — match by email to existing group-picks players
-    if(data.koPicks&&data.koPicks.length){
-      const byEmail={};
-      data.koPicks.forEach(row=>{
-        const email=(row['Email']||'').toLowerCase().trim();
-        const name=(row['Name']||'').trim();
-        if(!email||!name) return;
-        if(!byEmail[email]||new Date(row['Timestamp'])>new Date(byEmail[email].ts)){
-          byEmail[email]={name,row,ts:row['Timestamp']};
-        }
-      });
-      const KO_IDS=['r32-0','r32-1','r32-2','r32-3','r32-4','r32-5','r32-6','r32-7','r32-8','r32-9','r32-10','r32-11','r32-12','r32-13','r32-14','r32-15','r16-0','r16-1','r16-2','r16-3','r16-4','r16-5','r16-6','r16-7','qf-0','qf-1','qf-2','qf-3','sf-0','sf-1','final-0'];
-      let matched=0, unmatched=[];
-      Object.values(byEmail).forEach(({name,row,ts})=>{
-        // Match to an existing player by email; fall back to submitted name if no match
-        const playerName=Object.keys(state.players).find(p=>state.players[p].email===row['Email']?.toLowerCase().trim())||name;
-        if(!Object.keys(state.players).includes(playerName)) unmatched.push(name);
-        else matched++;
-        const koPicks={};
-        KO_IDS.forEach(id=>{ if(row[id]) koPicks[id]=fromAbbr(row[id]); });
-        state.koPicks[playerName]=koPicks;
-      });
-      console.log('Sheet: loaded KO picks for '+matched+' matched player(s)'+(unmatched.length?'; UNMATCHED (no group-picks email match): '+unmatched.join(', '):''));
-    }
-
-    try{renderGroups();}catch(e){}
-    try{renderPool();}catch(e){}
-    try{renderBracket();}catch(e){}
-    try{ if(document.getElementById('page-picks')?.classList.contains('active')) renderPicks(); }catch(e){}
-    try{ if(document.getElementById('page-sim')?.classList.contains('active')) renderSim(); }catch(e){}
   }catch(err){
     console.warn('Sheet fetch failed:',err.message);
   }
+
+  // ── Part 2: KO picks — from THIS edition's own sheet ──
+  await fetchKoPicksForEdition();
+
+  try{renderGroups();}catch(e){}
+  try{renderPool();}catch(e){}
+  try{renderBracket();}catch(e){}
+  try{ if(document.getElementById('page-picks')?.classList.contains('active')) renderPicks(); }catch(e){}
+  try{ if(document.getElementById('page-sim')?.classList.contains('active')) renderSim(); }catch(e){}
 }
 
 // ─── INIT ────────────────────────────────────────────────────
