@@ -970,21 +970,22 @@ function renderPool(){
   scores.forEach((row,i)=>{
     if(i>0&&scores[i].total<scores[i-1].total) rank=i+1;
     const champElim=row.champ&&elim.has(row.champ);
-    const champHtml=row.champ
+    const champHtml=(row.champ&&KO_PICKS_VISIBLE)
       ?`<div class="champ-flag ${champElim?'eliminated':''}" title="${row.champ}">${fi(row.champ,16)}</div>`
       :'<span style="color:var(--text-dim);font-size:10px">—</span>';
     const maxColor=row.max<100?'style="color:#e74c3c"':row.max<200?'style="color:var(--gold)"':'';
+    const showKo=KO_PICKS_VISIBLE;
     tbody.innerHTML+=`<tr class="pool-row">
       <td class="rank-cell ${rank<=3?'top':''}">${rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':rank}</td>
       <td style="font-weight:500;text-align:left">${row.name}</td>
       <td class="pts-round ${row.groupTotal?'has':''}">${row.groupTotal}</td>
-      <td class="pts-round ${row.ro32?'has':''}">${row.ro32||'—'}</td>
-      <td class="pts-round ${row.ro16?'has':''}">${row.ro16||'—'}</td>
-      <td class="pts-round pool-col-qf ${row.qf?'has':''}">${row.qf||'—'}</td>
-      <td class="pts-round pool-col-sf ${row.sf?'has':''}">${row.sf||'—'}</td>
-      <td class="pts-round pool-col-f ${row.final?'has':''}">${row.final||'—'}</td>
+      <td class="pts-round ${showKo&&row.ro32?'has':''}">${showKo?(row.ro32||'—'):'—'}</td>
+      <td class="pts-round ${showKo&&row.ro16?'has':''}">${showKo?(row.ro16||'—'):'—'}</td>
+      <td class="pts-round pool-col-qf ${showKo&&row.qf?'has':''}">${showKo?(row.qf||'—'):'—'}</td>
+      <td class="pts-round pool-col-sf ${showKo&&row.sf?'has':''}">${showKo?(row.sf||'—'):'—'}</td>
+      <td class="pts-round pool-col-f ${showKo&&row.final?'has':''}">${showKo?(row.final||'—'):'—'}</td>
       <td style="text-align:right">${champHtml}</td>
-      <td class="pts-total">${row.total}</td>
+      <td class="pts-total">${showKo?row.total:row.groupTotal}</td>
       <td class="max-pts" ${maxColor}>${row.max}</td>
     </tr>`;
   });
