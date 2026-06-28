@@ -5,6 +5,11 @@
 <link id="favicon" rel="icon" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/flags/4x3/us.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="page-title">World Cup 2026 Pool — USA Edition</title>
+<meta property="og:title" content="World Cup 2026 Pool — USA Edition">
+<meta property="og:description" content="Pool standings, group tables, bracket, and live scoring.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="World Cup 2026 Pool — USA Edition">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <style>
@@ -790,14 +795,29 @@ function calcMaxPossible(playerName){
   // = 24 picks × 2pts + 8 picks × 2pts = 64 max. Each pick scored independently 0/1/2.
   const thirds=getAllThirds();
   const advancingThirds=thirds.slice(0,8).map(t=>t.name);
+  const sheetGroupResultsMax=state.groupResults||{};
+  const hasSheetResultsMax=Object.keys(sheetGroupResultsMax).some(g=>sheetGroupResultsMax[g]?.first);
   let groupMax=0;
   GKEYS.forEach(letter=>{
-    const groupMatches=MATCHES.filter(m=>m.g===letter);
-    const allPlayed=groupMatches.every(m=>{
-      const r=state.results[m.id];
-      return r&&r.hg!==''&&r.hg!==undefined&&r.ag!==''&&r.ag!==undefined&&!isNaN(parseInt(r.hg))&&!isNaN(parseInt(r.ag));
-    });
     const picks=(player.groupPicks&&player.groupPicks[letter])||{};
+    const gr=sheetGroupResultsMax[letter];
+    const useSheet=hasSheetResultsMax&&gr&&gr.first;
+
+    let allPlayed,first,second,third;
+    if(useSheet){
+      allPlayed=true;
+      first=fromAbbr(gr.first); second=fromAbbr(gr.second); third=fromAbbr(gr.third);
+    } else {
+      const groupMatches=MATCHES.filter(m=>m.g===letter);
+      allPlayed=groupMatches.every(m=>{
+        const r=state.results[m.id];
+        return r&&r.hg!==''&&r.hg!==undefined&&r.ag!==''&&r.ag!==undefined&&!isNaN(parseInt(r.hg))&&!isNaN(parseInt(r.ag));
+      });
+      if(allPlayed){
+        const table=calcGroupTable(letter);
+        first=table[0]?.name; second=table[1]?.name; third=table[2]?.name;
+      }
+    }
 
     if(!allPlayed){
       // Group not finished — each pick the player actually made can still earn full 2pts
@@ -809,13 +829,12 @@ function calcMaxPossible(playerName){
     }
 
     // Group finished — score each pick against the final table
-    const table=calcGroupTable(letter);
     [1,2,3].forEach(rank=>{
       const t=picks[rank];
       if(!t) return; // no pick made = 0, contributes nothing
-      const actualPos = table[0]?.name===t ? 1
-                       : table[1]?.name===t ? 2
-                       : (advancingThirds.includes(t)&&table[2]?.name===t) ? 3
+      const actualPos = t===first ? 1
+                       : t===second ? 2
+                       : (advancingThirds.includes(t)&&t===third) ? 3
                        : null;
       if(actualPos===null){ groupMax+=0; }      // didn't advance: 0/2
       else if(actualPos===rank){ groupMax+=2; }  // exact position: 2/2
@@ -1043,9 +1062,21 @@ function renderPicks(){
 
   // ── LEFT: Group picks ──────────────────────────────────────
   html+=`<div><div class="section-title" style="font-size:14px">Group Picks</div>`;
+  const sheetGroupResults=state.groupResults||{};
+  const hasSheetResultsForPicks=Object.keys(sheetGroupResults).some(g=>sheetGroupResults[g]?.first);
   GKEYS.forEach(letter=>{
-    const table=calcGroupTable(letter);
     const picks=gp[letter]||{};
+    const gr=sheetGroupResults[letter];
+    const useSheet=hasSheetResultsForPicks&&gr&&gr.first;
+    let first,second,third,allPlayed;
+    if(useSheet){
+      first=fromAbbr(gr.first); second=fromAbbr(gr.second); third=fromAbbr(gr.third);
+      allPlayed=true;
+    } else {
+      const table=calcGroupTable(letter);
+      first=table[0]?.name; second=table[1]?.name; third=table[2]?.name;
+      allPlayed=MATCHES.filter(m=>m.g===letter).every(m=>state.results[m.id]?.hg!=='');
+    }
     html+=`<div class="picks-group-card"><div class="picks-group-lbl">Group ${letter}</div>`;
     [1,2,3].forEach(rank=>{
       const team=picks[rank];
@@ -1056,11 +1087,8 @@ function renderPicks(){
         html+=`<div class="picks-group-row"><span style="color:var(--text-dim);font-size:10px;width:22px">${label}</span><span style="color:var(--text-dim)">—</span></div>`;
         return;
       }
-      const actualPos=table.findIndex(t=>t.name===team)+1;
-      const allPlayed=MATCHES.filter(m=>m.g===letter).every(m=>state.results[m.id]?.hg!=='');
-      const advanced1=table[0]?.name===team, advanced2=table[1]?.name===team;
-      const advanced3=advancingThirds.includes(team)&&table[2]?.name===team;
-      const teamAdvanced=advanced1||advanced2||advanced3;
+      const actualPos = team===first?1 : team===second?2 : (advancingThirds.includes(team)&&team===third)?3 : null;
+      const teamAdvanced = actualPos!==null;
       let rowColor='', checks='', ptsStr='';
       if(allPlayed){
         const posCorrect=teamAdvanced&&(actualPos===rank);
